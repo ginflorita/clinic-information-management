@@ -97,6 +97,11 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'options' => [
+                // Avoids "prepared statement already exists" errors when running
+                // behind PgBouncer in transaction-pooling mode (e.g. Supabase's pooler).
+                PDO::ATTR_EMULATE_PREPARES => env('DB_EMULATE_PREPARES', true),
+            ],
         ],
 
         'sqlsrv' => [
