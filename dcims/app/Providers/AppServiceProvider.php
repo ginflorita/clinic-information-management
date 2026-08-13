@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Vercel's edge terminates TLS and forwards to the function over plain
+        // HTTP, so without this, url()/asset() generate http:// links.
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
