@@ -15,6 +15,11 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </li>
+                <li class="nav-item">
+                    <x-nav-link :href="route('patients.index')" :active="request()->routeIs('patients.*')">
+                        {{ __('Patients') }}
+                    </x-nav-link>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{ __('Master Data') }}

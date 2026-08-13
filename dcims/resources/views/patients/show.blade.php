@@ -1,0 +1,257 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="fs-4 fw-semibold text-dark mb-0">
+                {{ $patient->full_name }}
+                <span class="badge {{ $patient->status === 'active' ? 'text-bg-success' : ($patient->status === 'archived' ? 'text-bg-secondary' : 'text-bg-warning') }} text-capitalize">
+                    {{ $patient->status }}
+                </span>
+            </h2>
+            <div class="d-flex gap-2">
+                <a href="{{ route('patients.edit', $patient) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                @if ($patient->status === 'archived')
+                    <form method="POST" action="{{ route('patients.restore', $patient) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-success">Restore</button>
+                    </form>
+                @else
+                    <form method="POST" action="{{ route('patients.archive', $patient) }}" onsubmit="return confirm('Archive this patient?');">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-warning">Archive</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </x-slot>
+
+    <div class="py-4">
+        <div class="container-fluid px-4 d-flex flex-column gap-4" style="max-width: 60rem;">
+            @if (session('status'))
+                <div class="alert alert-success mb-0">{{ session('status') }}</div>
+            @endif
+
+            <div class="bg-white shadow-sm rounded p-4">
+                <div class="row row-cols-2 row-cols-md-4 g-3">
+                    <div><small class="text-secondary d-block">Patient #</small>{{ $patient->patient_number }}</div>
+                    <div><small class="text-secondary d-block">Date of Birth</small>{{ $patient->date_of_birth->format('Y-m-d') }} ({{ $patient->age }})</div>
+                    <div><small class="text-secondary d-block">Sex</small>{{ ucfirst($patient->sex) }}</div>
+                    <div><small class="text-secondary d-block">Civil Status</small>{{ $patient->civil_status ? ucfirst($patient->civil_status) : '—' }}</div>
+                    <div><small class="text-secondary d-block">Occupation</small>{{ $patient->occupation ?: '—' }}</div>
+                    <div><small class="text-secondary d-block">Email</small>{{ $patient->email ?: '—' }}</div>
+                    <div><small class="text-secondary d-block">Registration Date</small>{{ $patient->registration_date->format('Y-m-d') }}</div>
+                    <div><small class="text-secondary d-block">Referral Source</small>{{ $patient->referral_source ?: '—' }}</div>
+                </div>
+            </div>
+
+            {{-- Contacts --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Contacts</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->contacts as $contact)
+                            <tr>
+                                <td class="text-capitalize">{{ $contact->contact_type }}</td>
+                                <td>{{ $contact->contact_value }}</td>
+                                <td>{{ $contact->is_primary ? 'Primary' : '' }}</td>
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('patients.contacts.destroy', [$patient, $contact]) }}" class="d-inline" onsubmit="return confirm('Remove this contact?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No contacts on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.contacts.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <select name="contact_type" class="form-select form-select-sm" required>
+                            <option value="mobile">Mobile</option>
+                            <option value="telephone">Telephone</option>
+                            <option value="email">Email</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="contact_value" class="form-control form-control-sm" placeholder="Value" required>
+                    </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" name="is_primary" value="1" class="form-check-input" id="contact_is_primary">
+                        <label class="form-check-label" for="contact_is_primary">Primary</label>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Add Contact</button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Addresses --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Addresses</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->addresses as $address)
+                            <tr>
+                                <td class="text-capitalize">{{ $address->address_type }}</td>
+                                <td>{{ collect([$address->address_line_1, $address->address_line_2, $address->barangay, $address->city, $address->province, $address->postal_code, $address->country])->filter()->implode(', ') }}</td>
+                                <td>{{ $address->is_primary ? 'Primary' : '' }}</td>
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('patients.addresses.destroy', [$patient, $address]) }}" class="d-inline" onsubmit="return confirm('Remove this address?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No addresses on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.addresses.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <select name="address_type" class="form-select form-select-sm" required>
+                            <option value="home">Home</option>
+                            <option value="work">Work</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="address_line_1" class="form-control form-control-sm" placeholder="Address line 1" required>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="city" class="form-control form-control-sm" placeholder="City">
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="province" class="form-control form-control-sm" placeholder="Province">
+                    </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" name="is_primary" value="1" class="form-check-input" id="address_is_primary">
+                        <label class="form-check-label" for="address_is_primary">Primary</label>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Add Address</button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Relationships / Guardians / Emergency Contacts --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Relationships &amp; Emergency Contacts</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->relationships as $relationship)
+                            <tr>
+                                <td>{{ $relationship->display_name }}</td>
+                                <td class="text-capitalize">{{ $relationship->relationship_type }}</td>
+                                <td>
+                                    @if ($relationship->is_guardian) <span class="badge text-bg-info">Guardian</span> @endif
+                                    @if ($relationship->is_emergency_contact) <span class="badge text-bg-warning">Emergency</span> @endif
+                                </td>
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('patients.relationships.destroy', [$patient, $relationship]) }}" class="d-inline" onsubmit="return confirm('Remove this relationship?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No relationships on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.relationships.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-md-4">
+                        <label class="form-label small">Existing patient (if applicable)</label>
+                        <select name="related_patient_id" class="form-select form-select-sm select2">
+                            <option value=""></option>
+                            @foreach (\App\Models\Patient::where('id', '!=', $patient->id)->orderBy('last_name')->get() as $other)
+                                <option value="{{ $other->id }}">{{ $other->full_name }} ({{ $other->patient_number }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Or name (non-patient)</label>
+                        <input type="text" name="contact_name" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Phone</label>
+                        <input type="text" name="contact_phone" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Relationship</label>
+                        <input type="text" name="relationship_type" class="form-control form-control-sm" placeholder="mother, spouse..." required>
+                    </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" name="is_guardian" value="1" class="form-check-input" id="is_guardian">
+                        <label class="form-check-label" for="is_guardian">Guardian</label>
+                    </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" name="is_emergency_contact" value="1" class="form-check-input" id="is_emergency_contact">
+                        <label class="form-check-label" for="is_emergency_contact">Emergency</label>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+                    </div>
+                </form>
+                @error('contact_name')
+                    <p class="text-danger small mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Identifiers --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Identifiers</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->identifiers as $identifier)
+                            <tr>
+                                <td class="text-capitalize">{{ $identifier->identifier_type }}</td>
+                                <td>{{ $identifier->identifier_value }}</td>
+                                <td>{{ $identifier->issuing_authority }}</td>
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('patients.identifiers.destroy', [$patient, $identifier]) }}" class="d-inline" onsubmit="return confirm('Remove this identifier?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No identifiers on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.identifiers.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <input type="text" name="identifier_type" class="form-control form-control-sm" placeholder="philhealth, national_id..." required>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="identifier_value" class="form-control form-control-sm" placeholder="Value" required>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="issuing_authority" class="form-control form-control-sm" placeholder="Issuing authority">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Add Identifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                $('.select2').select2({ width: '100%', allowClear: true, placeholder: 'Search patients...' });
+            });
+        </script>
+    @endpush
+</x-app-layout>
