@@ -51,4 +51,11 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_unauthenticated_request_to_protected_route_redirects_to_login(): void
+    {
+        $response = $this->get('/dashboard');
+
+        $response->assertRedirect(route('login', absolute: false));
+    }
 }
