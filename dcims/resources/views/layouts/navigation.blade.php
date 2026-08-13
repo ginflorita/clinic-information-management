@@ -15,6 +15,24 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ __('Master Data') }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('admin.procedure-categories.index') }}">{{ __('Procedure Categories') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.procedures.index') }}">{{ __('Procedures') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.tooth-conditions.index') }}">{{ __('Tooth Conditions') }}</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.providers.index') }}">{{ __('Providers') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.chairs.index') }}">{{ __('Chairs') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.appointment-types.index') }}">{{ __('Appointment Types') }}</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.payment-methods.index') }}">{{ __('Payment Methods') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.inventory-categories.index') }}">{{ __('Inventory Categories') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.inventory-units.index') }}">{{ __('Inventory Units') }}</a></li>
+                    </ul>
+                </li>
             </ul>
 
             <ul class="navbar-nav ms-auto">
