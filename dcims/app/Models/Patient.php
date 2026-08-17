@@ -128,4 +128,9 @@ class Patient extends Model
     {
         return $this->hasMany(Encounter::class);
     }
+
+    public function odontograms(): HasMany
+    {
+        return $this->hasMany(Odontogram::class);
+    }
 }

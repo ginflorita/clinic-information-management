@@ -130,6 +130,71 @@
                     </div>
                 </form>
             </div>
+
+            <div class="bg-white shadow-sm rounded p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-medium mb-0">Dental Chart</h3>
+                    <a href="{{ route('patients.odontogram.show', $encounter->patient) }}" class="small">View full chart history</a>
+                </div>
+
+                <p class="text-secondary small mb-2">Click a tooth to record a condition.</p>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                    @foreach ($teeth as $tooth)
+                        <button type="button" class="btn btn-sm btn-outline-dark" style="width: 3rem;" data-bs-toggle="collapse" data-bs-target="#tooth-form-{{ $tooth->id }}">
+                            {{ $tooth->tooth_code }}
+                        </button>
+                    @endforeach
+                </div>
+
+                @foreach ($teeth as $tooth)
+                    <div class="collapse mb-2" id="tooth-form-{{ $tooth->id }}">
+                        <form method="POST" action="{{ route('encounters.odontogram-entries.store', $encounter) }}" class="border rounded p-3">
+                            @csrf
+                            <input type="hidden" name="tooth_id" value="{{ $tooth->id }}">
+                            <p class="fw-medium mb-2 small">Tooth {{ $tooth->tooth_code }} — {{ $tooth->tooth_name }}</p>
+                            <div class="row g-2 align-items-start">
+                                <div class="col-md-4">
+                                    <select name="condition_id" class="form-select form-select-sm" required>
+                                        <option value="">Condition...</option>
+                                        @foreach ($toothConditions as $condition)
+                                            <option value="{{ $condition->id }}">{{ $condition->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="d-flex flex-wrap gap-2 pt-1">
+                                        @foreach ($surfaces as $surface)
+                                            <div class="form-check form-check-inline m-0">
+                                                <input class="form-check-input" type="checkbox" name="surfaces[]" value="{{ $surface }}" id="surface-{{ $tooth->id }}-{{ $surface }}">
+                                                <label class="form-check-label small" for="surface-{{ $tooth->id }}-{{ $surface }}">{{ $surface }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary w-100">Record</button>
+                                </div>
+                            </div>
+                            <textarea name="notes" class="form-control form-control-sm mt-2" rows="1" placeholder="Notes (optional)"></textarea>
+                        </form>
+                    </div>
+                @endforeach
+
+                <h4 class="fs-6 fw-medium mt-4 mb-2">Recorded This Visit</h4>
+                @forelse (($encounter->odontogram->entries ?? []) as $entry)
+                    <div class="border rounded p-2 mb-2 small">
+                        <strong>{{ $entry->tooth->tooth_code }}</strong> {{ $entry->condition->name }}
+                        @if ($entry->surfaces->isNotEmpty())
+                            <span class="text-secondary">({{ $entry->surfaces->pluck('surface')->join(', ') }})</span>
+                        @endif
+                        @if ($entry->notes)
+                            <div class="text-secondary">{{ $entry->notes }}</div>
+                        @endif
+                    </div>
+                @empty
+                    <p class="text-secondary small mb-0">No chart entries recorded this visit yet.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 </x-app-layout>

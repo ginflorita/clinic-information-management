@@ -14,6 +14,8 @@ use App\Http\Controllers\ClinicalNoteController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
 use App\Http\Controllers\MedicalHistoryController;
+use App\Http\Controllers\OdontogramController;
+use App\Http\Controllers\OdontogramEntryController;
 use App\Http\Controllers\PatientAddressController;
 use App\Http\Controllers\PatientAllergyController;
 use App\Http\Controllers\PatientConditionController;
@@ -57,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('patients/{patient}/conditions/{condition}', [PatientConditionController::class, 'destroy'])->name('patients.conditions.destroy');
     Route::post('patients/{patient}/allergies', [PatientAllergyController::class, 'store'])->name('patients.allergies.store');
     Route::delete('patients/{patient}/allergies/{allergy}', [PatientAllergyController::class, 'destroy'])->name('patients.allergies.destroy');
+    Route::get('patients/{patient}/odontogram', [OdontogramController::class, 'show'])->name('patients.odontogram.show');
 
     Route::resource('appointments', AppointmentController::class)->except('destroy', 'show');
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
@@ -70,6 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::put('encounters/{encounter}/notes/{note}', [ClinicalNoteController::class, 'update'])->name('encounters.notes.update');
     Route::post('encounters/{encounter}/notes/{note}/sign', [ClinicalNoteController::class, 'sign'])->name('encounters.notes.sign');
     Route::post('encounters/{encounter}/notes/{note}/amend', [ClinicalNoteController::class, 'amend'])->name('encounters.notes.amend');
+    Route::post('encounters/{encounter}/odontogram-entries', [OdontogramEntryController::class, 'store'])->name('encounters.odontogram-entries.store');
 
     Route::get('queue', [QueueEntryController::class, 'index'])->name('queue.index');
     Route::post('queue', [QueueEntryController::class, 'store'])->name('queue.store');

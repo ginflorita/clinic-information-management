@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Encounter extends Model
 {
@@ -75,5 +76,10 @@ class Encounter extends Model
     public function clinicalNotes(): HasMany
     {
         return $this->hasMany(ClinicalNote::class);
+    }
+
+    public function odontogram(): HasOne
+    {
+        return $this->hasOne(Odontogram::class);
     }
 }

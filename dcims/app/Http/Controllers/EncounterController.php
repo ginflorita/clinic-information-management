@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Encounter;
+use App\Models\OdontogramEntrySurface;
 use App\Models\Patient;
 use App\Models\Provider;
+use App\Models\Tooth;
+use App\Models\ToothCondition;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -66,9 +69,16 @@ class EncounterController extends Controller
     {
         $encounter->load(['patient', 'provider', 'appointment', 'clinicalNotes' => function ($query) {
             $query->with(['creator', 'signer'])->orderByDesc('created_at');
+        }, 'odontogram.entries' => function ($query) {
+            $query->with(['tooth', 'condition', 'surfaces'])->orderByDesc('created_at');
         }]);
 
-        return view('encounters.show', ['encounter' => $encounter]);
+        return view('encounters.show', [
+            'encounter' => $encounter,
+            'teeth' => Tooth::where('is_active', true)->where('dentition_type', 'permanent')->orderBy('arch')->orderBy('position')->get(),
+            'toothConditions' => ToothCondition::where('is_active', true)->orderBy('name')->get(),
+            'surfaces' => OdontogramEntrySurface::SURFACES,
+        ]);
     }
 
     public function complete(Encounter $encounter): RedirectResponse

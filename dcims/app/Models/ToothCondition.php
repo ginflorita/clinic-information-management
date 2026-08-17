@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ToothCondition extends Model
@@ -15,4 +16,9 @@ class ToothCondition extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function odontogramEntries(): HasMany
+    {
+        return $this->hasMany(OdontogramEntry::class, 'condition_id');
+    }
 }
