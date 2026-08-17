@@ -47,7 +47,7 @@ class PatientController extends Controller
 
     public function show(Patient $patient): View
     {
-        $patient->load(['addresses', 'contacts', 'relationships.relatedPatient', 'identifiers']);
+        $patient->load(['addresses', 'contacts', 'relationships.relatedPatient', 'identifiers', 'medicalHistory', 'dentalHistory', 'conditions', 'allergies']);
 
         return view('patients.show', ['patient' => $patient]);
     }

@@ -30,6 +30,19 @@
                 <div class="alert alert-success mb-0">{{ session('status') }}</div>
             @endif
 
+            {{-- Allergy alert banner — must stay the first thing a clinician sees, never buried in a tab --}}
+            @php $activeAllergies = $patient->allergies->where('status', 'active'); @endphp
+            @if ($activeAllergies->isNotEmpty())
+                <div class="alert alert-danger mb-0">
+                    <strong>⚠ Allergies:</strong>
+                    @foreach ($activeAllergies as $allergy)
+                        <span class="badge text-bg-danger text-capitalize me-1">
+                            {{ $allergy->allergen }} ({{ $allergy->severity }}{{ $allergy->reaction ? ' — '.$allergy->reaction : '' }})
+                        </span>
+                    @endforeach
+                </div>
+            @endif
+
             <div class="bg-white shadow-sm rounded p-4">
                 <div class="row row-cols-2 row-cols-md-4 g-3">
                     <div><small class="text-secondary d-block">Patient #</small>{{ $patient->patient_number }}</div>
@@ -41,6 +54,146 @@
                     <div><small class="text-secondary d-block">Registration Date</small>{{ $patient->registration_date->format('Y-m-d') }}</div>
                     <div><small class="text-secondary d-block">Referral Source</small>{{ $patient->referral_source ?: '—' }}</div>
                 </div>
+            </div>
+
+            {{-- Medical & Dental History --}}
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="bg-white shadow-sm rounded p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h3 class="fs-5 fw-medium mb-0">Medical History</h3>
+                            <a href="{{ route('patients.medical-history.edit', $patient) }}" class="btn btn-sm btn-outline-secondary">
+                                {{ $patient->medicalHistory ? 'Edit' : 'Record' }}
+                            </a>
+                        </div>
+                        @if ($patient->medicalHistory)
+                            <p class="small text-secondary mb-0">
+                                Last recorded {{ $patient->medicalHistory->recorded_at->format('Y-m-d') }}.
+                                @if ($patient->medicalHistory->medical_alerts)
+                                    <span class="text-danger fw-medium d-block mt-1">Alert: {{ $patient->medicalHistory->medical_alerts }}</span>
+                                @endif
+                            </p>
+                        @else
+                            <p class="small text-secondary mb-0">No medical history on file.</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-white shadow-sm rounded p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h3 class="fs-5 fw-medium mb-0">Dental History</h3>
+                            <a href="{{ route('patients.dental-history.edit', $patient) }}" class="btn btn-sm btn-outline-secondary">
+                                {{ $patient->dentalHistory ? 'Edit' : 'Record' }}
+                            </a>
+                        </div>
+                        @if ($patient->dentalHistory)
+                            <p class="small text-secondary mb-0">
+                                Last recorded {{ $patient->dentalHistory->recorded_at->format('Y-m-d') }}.
+                                @if ($patient->dentalHistory->chief_concerns)
+                                    <span class="d-block mt-1">Chief concern: {{ $patient->dentalHistory->chief_concerns }}</span>
+                                @endif
+                            </p>
+                        @else
+                            <p class="small text-secondary mb-0">No dental history on file.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- Medical Conditions --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Medical Conditions</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->conditions as $condition)
+                            <tr>
+                                <td>{{ $condition->condition_name }}</td>
+                                <td class="text-capitalize">{{ $condition->status }}</td>
+                                <td>{{ optional($condition->diagnosed_date)->format('Y-m-d') }}</td>
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('patients.conditions.destroy', [$patient, $condition]) }}" class="d-inline" onsubmit="return confirm('Remove this condition?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No conditions on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.conditions.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <input type="text" name="condition_name" class="form-control form-control-sm" placeholder="Condition (e.g. Diabetes)" required>
+                    </div>
+                    <div class="col-auto">
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="active">Active</option>
+                            <option value="managed">Managed</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" name="diagnosed_date" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Add Condition</button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Allergies --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Allergies</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->allergies as $allergy)
+                            <tr>
+                                <td>{{ $allergy->allergen }}</td>
+                                <td>{{ $allergy->reaction }}</td>
+                                <td class="text-capitalize">
+                                    <span class="badge {{ $allergy->severity === 'severe' ? 'text-bg-danger' : ($allergy->severity === 'moderate' ? 'text-bg-warning' : 'text-bg-secondary') }}">
+                                        {{ $allergy->severity }}
+                                    </span>
+                                </td>
+                                <td class="text-capitalize">{{ $allergy->status }}</td>
+                                <td class="text-end">
+                                    <form method="POST" action="{{ route('patients.allergies.destroy', [$patient, $allergy]) }}" class="d-inline" onsubmit="return confirm('Remove this allergy?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No allergies on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.allergies.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <input type="text" name="allergen" class="form-control form-control-sm" placeholder="Allergen (e.g. Penicillin)" required>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="reaction" class="form-control form-control-sm" placeholder="Reaction">
+                    </div>
+                    <div class="col-auto">
+                        <select name="severity" class="form-select form-select-sm">
+                            <option value="mild">Mild</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="severe">Severe</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" name="onset_date" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Add Allergy</button>
+                    </div>
+                </form>
             </div>
 
             {{-- Contacts --}}

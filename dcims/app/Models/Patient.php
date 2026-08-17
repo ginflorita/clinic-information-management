@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Patient extends Model
 {
@@ -96,5 +97,25 @@ class Patient extends Model
     public function identifiers(): HasMany
     {
         return $this->hasMany(PatientIdentifier::class);
+    }
+
+    public function medicalHistory(): HasOne
+    {
+        return $this->hasOne(MedicalHistory::class);
+    }
+
+    public function dentalHistory(): HasOne
+    {
+        return $this->hasOne(DentalHistory::class);
+    }
+
+    public function conditions(): HasMany
+    {
+        return $this->hasMany(PatientCondition::class);
+    }
+
+    public function allergies(): HasMany
+    {
+        return $this->hasMany(PatientAllergy::class);
     }
 }
