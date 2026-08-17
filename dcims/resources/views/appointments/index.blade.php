@@ -46,6 +46,14 @@
                                     </span>
                                 </td>
                                 <td class="text-end text-nowrap">
+                                    @if ($appointment->encounter)
+                                        <a href="{{ route('encounters.show', $appointment->encounter) }}" class="btn btn-sm btn-outline-primary">View Encounter</a>
+                                    @elseif (! in_array($appointment->status, ['cancelled', 'no_show']))
+                                        <form action="{{ route('appointments.encounter.start', $appointment) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Start Encounter</button>
+                                        </form>
+                                    @endif
                                     @if (! in_array($appointment->status, ['cancelled', 'no_show', 'completed']))
                                         <a href="{{ route('appointments.edit', $appointment) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                         <form action="{{ route('appointments.no-show', $appointment) }}" method="POST" class="d-inline" onsubmit="return confirm('Mark this appointment as a no-show?');">

@@ -17,7 +17,7 @@ class AppointmentController extends Controller
     public function index(): View
     {
         return view('appointments.index', [
-            'appointments' => Appointment::with(['patient', 'provider', 'chair', 'appointmentType'])
+            'appointments' => Appointment::with(['patient', 'provider', 'chair', 'appointmentType', 'encounter'])
                 ->orderBy('scheduled_start')
                 ->get(),
         ]);

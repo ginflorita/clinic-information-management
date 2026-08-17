@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Appointment;
+use App\Models\Encounter;
+use App\Models\Patient;
+use App\Models\Provider;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class EncounterController extends Controller
+{
+    public function index(): View
+    {
+        return view('encounters.index', [
+            'encounters' => Encounter::with(['patient', 'provider'])
+                ->orderByDesc('started_at')
+                ->get(),
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('encounters.create', [
+            'patients' => Patient::where('status', 'active')->orderBy('last_name')->get(),
+            'providers' => Provider::where('is_active', true)->orderBy('last_name')->get(),
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'patient_id' => ['required', 'exists:patients,id'],
+            'provider_id' => ['required', 'exists:providers,id'],
+            'chief_complaint' => ['nullable', 'string'],
+        ]);
+        $data['started_at'] = now();
+        $data['status'] = 'in_progress';
+
+        $encounter = Encounter::create($data);
+
+        return redirect()->route('encounters.show', $encounter)->with('status', 'Encounter started.');
+    }
+
+    public function startFromAppointment(Appointment $appointment): RedirectResponse
+    {
+        if ($appointment->encounter) {
+            return redirect()->route('encounters.show', $appointment->encounter);
+        }
+
+        $encounter = Encounter::create([
+            'patient_id' => $appointment->patient_id,
+            'appointment_id' => $appointment->id,
+            'provider_id' => $appointment->provider_id,
+            'status' => 'in_progress',
+            'started_at' => now(),
+            'chief_complaint' => $appointment->reason,
+        ]);
+
+        return redirect()->route('encounters.show', $encounter)->with('status', 'Encounter started.');
+    }
+
+    public function show(Encounter $encounter): View
+    {
+        $encounter->load(['patient', 'provider', 'appointment', 'clinicalNotes' => function ($query) {
+            $query->with(['creator', 'signer'])->orderByDesc('created_at');
+        }]);
+
+        return view('encounters.show', ['encounter' => $encounter]);
+    }
+
+    public function complete(Encounter $encounter): RedirectResponse
+    {
+        $encounter->complete();
+
+        return redirect()->route('encounters.show', $encounter)->with('status', 'Encounter completed.');
+    }
+}

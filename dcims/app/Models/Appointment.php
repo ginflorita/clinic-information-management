@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 class Appointment extends Model
@@ -100,6 +101,11 @@ class Appointment extends Model
     public function appointmentType(): BelongsTo
     {
         return $this->belongsTo(AppointmentType::class);
+    }
+
+    public function encounter(): HasOne
+    {
+        return $this->hasOne(Encounter::class);
     }
 
     public function chair(): BelongsTo
