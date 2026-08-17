@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ProcedureCategoryController;
 use App\Http\Controllers\Admin\ProcedureController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\ToothConditionController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\PatientAddressController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientIdentifierController;
 use App\Http\Controllers\PatientRelationshipController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QueueEntryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -53,6 +55,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('patients/{patient}/conditions/{condition}', [PatientConditionController::class, 'destroy'])->name('patients.conditions.destroy');
     Route::post('patients/{patient}/allergies', [PatientAllergyController::class, 'store'])->name('patients.allergies.store');
     Route::delete('patients/{patient}/allergies/{allergy}', [PatientAllergyController::class, 'destroy'])->name('patients.allergies.destroy');
+
+    Route::resource('appointments', AppointmentController::class)->except('destroy', 'show');
+    Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+    Route::post('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    Route::post('appointments/{appointment}/no-show', [AppointmentController::class, 'markNoShow'])->name('appointments.no-show');
+
+    Route::get('queue', [QueueEntryController::class, 'index'])->name('queue.index');
+    Route::post('queue', [QueueEntryController::class, 'store'])->name('queue.store');
+    Route::post('queue/{queueEntry}/call', [QueueEntryController::class, 'call'])->name('queue.call');
+    Route::post('queue/{queueEntry}/start', [QueueEntryController::class, 'start'])->name('queue.start');
+    Route::post('queue/{queueEntry}/complete', [QueueEntryController::class, 'complete'])->name('queue.complete');
+    Route::post('queue/{queueEntry}/skip', [QueueEntryController::class, 'skip'])->name('queue.skip');
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('procedure-categories', ProcedureCategoryController::class)->except('show');
