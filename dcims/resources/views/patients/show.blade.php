@@ -189,7 +189,10 @@
 
             {{-- Invoices --}}
             <div class="bg-white shadow-sm rounded p-4">
-                <h3 class="fs-5 fw-medium mb-3">Invoices</h3>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-medium mb-0">Invoices</h3>
+                    <a href="{{ route('patients.ledger.show', $patient) }}" class="btn btn-sm btn-outline-secondary">View Ledger</a>
+                </div>
                 <table class="table table-sm mb-0">
                     <tbody>
                         @forelse ($patient->invoices as $invoice)
