@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Models\PaymentMethod;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +58,11 @@ class PatientController extends Controller
             $query->orderByDesc('invoice_date');
         }]);
 
-        return view('patients.show', ['patient' => $patient]);
+        return view('patients.show', [
+            'patient' => $patient,
+            'outstandingInvoices' => $patient->invoices->filter(fn ($invoice) => $invoice->balance > 0),
+            'paymentMethods' => PaymentMethod::where('is_active', true)->orderBy('name')->get(),
+        ]);
     }
 
     public function edit(Patient $patient): View

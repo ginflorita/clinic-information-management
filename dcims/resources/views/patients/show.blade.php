@@ -211,6 +211,47 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                @if ($outstandingInvoices->count() > 1)
+                    <hr>
+                    <h4 class="fs-6 fw-medium mb-2">Record Split Payment</h4>
+                    <p class="text-secondary small mb-2">Enter an amount for each invoice this payment covers.</p>
+                    <form method="POST" action="{{ route('patients.payments.store', $patient) }}">
+                        @csrf
+                        <div class="row g-2 align-items-end mb-2">
+                            <div class="col-md-4">
+                                <x-input-label for="split_payment_method_id" value="Method" />
+                                <select id="split_payment_method_id" name="payment_method_id" class="form-select form-select-sm" required>
+                                    <option value="">Select...</option>
+                                    @foreach ($paymentMethods as $method)
+                                        <option value="{{ $method->id }}">{{ $method->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <x-input-label for="split_reference_number" value="Reference #" />
+                                <input type="text" id="split_reference_number" name="reference_number" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <table class="table table-sm mb-2">
+                            <thead>
+                                <tr><th>Invoice</th><th>Balance</th><th>Amount to Apply</th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($outstandingInvoices as $invoice)
+                                    <tr>
+                                        <td>{{ $invoice->invoice_number }}</td>
+                                        <td>{{ number_format($invoice->balance, 2) }}</td>
+                                        <td>
+                                            <input type="number" name="allocations[{{ $invoice->id }}]" class="form-control form-control-sm" step="0.01" min="0" max="{{ $invoice->balance }}">
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Record Split Payment</button>
+                    </form>
+                @endif
             </div>
 
             {{-- Medical Conditions --}}

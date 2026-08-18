@@ -43,6 +43,25 @@ class PaymentTest extends TestCase
         $this->assertMatchesRegularExpression('/^PAY-\d{4}-\d{6}$/', $payment->payment_number);
     }
 
+    public function test_the_simple_case_also_creates_a_matching_allocation_row(): void
+    {
+        $invoice = Invoice::factory()->create();
+        $method = PaymentMethod::factory()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->post(route('invoices.payments.store', $invoice), [
+                'payment_method_id' => $method->id,
+                'amount' => 500,
+            ]);
+
+        $payment = Payment::first();
+        $this->assertSame(1, $payment->allocations()->count());
+        $allocation = $payment->allocations()->first();
+        $this->assertSame($invoice->id, $allocation->invoice_id);
+        $this->assertEquals(500, $allocation->amount_applied);
+        $this->assertEquals($payment->amount, $payment->allocations()->sum('amount_applied'));
+    }
+
     public function test_a_completed_payment_can_be_voided(): void
     {
         $invoice = Invoice::factory()->create();

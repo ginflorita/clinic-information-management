@@ -37,7 +37,7 @@ class InvoiceBalanceTriggerTest extends TestCase
         $method = PaymentMethod::factory()->create();
         $user = User::factory()->create();
 
-        Payment::create([
+        $payment = Payment::create([
             'patient_id' => $invoice->patient_id,
             'invoice_id' => $invoice->id,
             'payment_date' => now()->toDateString(),
@@ -46,6 +46,7 @@ class InvoiceBalanceTriggerTest extends TestCase
             'status' => 'completed',
             'received_by' => $user->id,
         ]);
+        $payment->allocations()->create(['invoice_id' => $invoice->id, 'amount_applied' => 800]);
 
         $this->assertEquals(1200, $invoice->fresh()->balance);
         $this->assertEquals(800, $invoice->fresh()->amount_paid);
@@ -81,6 +82,7 @@ class InvoiceBalanceTriggerTest extends TestCase
             'status' => 'completed',
             'received_by' => $user->id,
         ]);
+        $payment->allocations()->create(['invoice_id' => $invoice->id, 'amount_applied' => 800]);
 
         $this->assertEquals(1200, $invoice->fresh()->balance);
 
@@ -97,5 +99,33 @@ class InvoiceBalanceTriggerTest extends TestCase
         DB::table('invoices')->where('id', $invoice->id)->update(['balance' => 999999]);
 
         $this->assertEquals(2000, $invoice->fresh()->balance, 'The BEFORE UPDATE trigger recomputes balance from actual payments/adjustments regardless of what was written.');
+    }
+
+    public function test_a_single_payment_split_across_two_invoices_recalculates_both_balances(): void
+    {
+        $invoiceA = Invoice::factory()->create(['total_amount' => 1000]);
+        $invoiceB = Invoice::factory()->create(['total_amount' => 2000]);
+        $method = PaymentMethod::factory()->create();
+        $user = User::factory()->create();
+
+        $payment = Payment::create([
+            'patient_id' => $invoiceA->patient_id,
+            'invoice_id' => null,
+            'payment_date' => now()->toDateString(),
+            'payment_method_id' => $method->id,
+            'amount' => 1500,
+            'status' => 'completed',
+            'received_by' => $user->id,
+        ]);
+        $payment->allocations()->create(['invoice_id' => $invoiceA->id, 'amount_applied' => 1000]);
+        $payment->allocations()->create(['invoice_id' => $invoiceB->id, 'amount_applied' => 500]);
+
+        $this->assertEquals(0, $invoiceA->fresh()->balance);
+        $this->assertEquals(1500, $invoiceB->fresh()->balance);
+
+        $payment->void();
+
+        $this->assertEquals(1000, $invoiceA->fresh()->balance, 'Voiding a split payment restores every invoice it touched.');
+        $this->assertEquals(2000, $invoiceB->fresh()->balance);
     }
 }

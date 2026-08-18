@@ -69,19 +69,23 @@
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Payments</h3>
                 <div class="d-flex flex-column gap-2 mb-3">
-                    @forelse ($invoice->payments as $payment)
+                    @forelse ($invoice->allocations as $allocation)
+                        @php $payment = $allocation->payment; @endphp
                         <div class="border rounded p-2 d-flex justify-content-between align-items-center">
                             <div>
                                 <span class="badge text-bg-{{ $payment->status === 'completed' ? 'success' : 'secondary' }} text-capitalize">
                                     {{ $payment->status }}
                                 </span>
-                                <span class="fw-medium ms-1">{{ number_format($payment->amount, 2) }}</span>
+                                <span class="fw-medium ms-1">{{ number_format($allocation->amount_applied, 2) }}</span>
                                 <span class="text-secondary">via {{ $payment->paymentMethod->name }} on {{ $payment->payment_date->format('Y-m-d') }}</span>
                                 @if ($payment->reference_number)
                                     <span class="text-secondary">(Ref: {{ $payment->reference_number }})</span>
                                 @endif
+                                @if ($payment->invoice_id !== $invoice->id)
+                                    <span class="badge text-bg-light text-dark border">Split payment — {{ $payment->payment_number }}</span>
+                                @endif
                             </div>
-                            @if ($payment->status === 'completed')
+                            @if ($payment->status === 'completed' && $payment->invoice_id === $invoice->id)
                                 <form method="POST" action="{{ route('invoices.payments.void', [$invoice, $payment]) }}" onsubmit="return confirm('Void this payment?');">
                                     @csrf
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Void</button>
