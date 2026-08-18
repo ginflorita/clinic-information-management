@@ -82,4 +82,9 @@ class Encounter extends Model
     {
         return $this->hasOne(Odontogram::class);
     }
+
+    public function diagnoses(): HasMany
+    {
+        return $this->hasMany(EncounterDiagnosis::class);
+    }
 }

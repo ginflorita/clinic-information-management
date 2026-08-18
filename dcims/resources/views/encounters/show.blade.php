@@ -132,6 +132,69 @@
             </div>
 
             <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Diagnoses</h3>
+
+                <div class="d-flex flex-column gap-2 mb-3">
+                    @forelse ($encounter->diagnoses as $encounterDiagnosis)
+                        <div class="border rounded p-2 d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge text-bg-{{ match($encounterDiagnosis->status) { 'suspected' => 'secondary', 'active' => 'danger', 'resolved' => 'success', 'historical' => 'secondary', default => 'secondary' } }} text-capitalize">
+                                    {{ $encounterDiagnosis->status }}
+                                </span>
+                                <span class="fw-medium ms-1">{{ $encounterDiagnosis->diagnosis->name }}</span>
+                                @if ($encounterDiagnosis->tooth)
+                                    <span class="text-secondary">— Tooth {{ $encounterDiagnosis->tooth->tooth_code }}</span>
+                                @endif
+                                @if ($encounterDiagnosis->notes)
+                                    <div class="text-secondary small">{{ $encounterDiagnosis->notes }}</div>
+                                @endif
+                            </div>
+                            <form method="POST" action="{{ route('encounters.diagnoses.status', [$encounter, $encounterDiagnosis]) }}" class="d-flex gap-1">
+                                @csrf
+                                @method('PATCH')
+                                <select name="status" class="form-select form-select-sm">
+                                    @foreach ($diagnosisStatuses as $status)
+                                        <option value="{{ $status }}" @selected($status === $encounterDiagnosis->status)>{{ ucfirst($status) }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                            </form>
+                        </div>
+                    @empty
+                        <p class="text-secondary mb-0">No diagnoses recorded for this encounter.</p>
+                    @endforelse
+                </div>
+
+                <form method="POST" action="{{ route('encounters.diagnoses.store', $encounter) }}">
+                    @csrf
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <select name="diagnosis_id" class="form-select form-select-sm" required>
+                                <option value="">Diagnosis...</option>
+                                @foreach ($diagnosisOptions as $diagnosis)
+                                    <option value="{{ $diagnosis->id }}">{{ $diagnosis->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select name="tooth_id" class="form-select form-select-sm">
+                                <option value="">Tooth (optional)...</option>
+                                @foreach ($teeth as $tooth)
+                                    <option value="{{ $tooth->id }}">{{ $tooth->tooth_code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="notes" class="form-control form-control-sm" placeholder="Notes (optional)">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-sm btn-outline-primary w-100">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white shadow-sm rounded p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="fs-5 fw-medium mb-0">Dental Chart</h3>
                     <a href="{{ route('patients.odontogram.show', $encounter->patient) }}" class="small">View full chart history</a>

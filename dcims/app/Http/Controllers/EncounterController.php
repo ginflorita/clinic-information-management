@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Diagnosis;
 use App\Models\Encounter;
+use App\Models\EncounterDiagnosis;
 use App\Models\OdontogramEntrySurface;
 use App\Models\Patient;
 use App\Models\Provider;
@@ -71,6 +73,8 @@ class EncounterController extends Controller
             $query->with(['creator', 'signer'])->orderByDesc('created_at');
         }, 'odontogram.entries' => function ($query) {
             $query->with(['tooth', 'condition', 'surfaces'])->orderByDesc('created_at');
+        }, 'diagnoses' => function ($query) {
+            $query->with(['diagnosis', 'tooth'])->orderByDesc('diagnosed_at');
         }]);
 
         return view('encounters.show', [
@@ -78,6 +82,8 @@ class EncounterController extends Controller
             'teeth' => Tooth::where('is_active', true)->where('dentition_type', 'permanent')->orderBy('arch')->orderBy('position')->get(),
             'toothConditions' => ToothCondition::where('is_active', true)->orderBy('name')->get(),
             'surfaces' => OdontogramEntrySurface::SURFACES,
+            'diagnosisOptions' => Diagnosis::where('is_active', true)->orderBy('name')->get(),
+            'diagnosisStatuses' => EncounterDiagnosis::STATUSES,
         ]);
     }
 

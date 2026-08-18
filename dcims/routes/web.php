@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AppointmentTypeController;
 use App\Http\Controllers\Admin\ChairController;
+use App\Http\Controllers\Admin\DiagnosisController;
 use App\Http\Controllers\Admin\InventoryCategoryController;
 use App\Http\Controllers\Admin\InventoryUnitController;
 use App\Http\Controllers\Admin\PaymentMethodController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClinicalNoteController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
+use App\Http\Controllers\EncounterDiagnosisController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\OdontogramController;
 use App\Http\Controllers\OdontogramEntryController;
@@ -74,6 +76,8 @@ Route::middleware('auth')->group(function () {
     Route::post('encounters/{encounter}/notes/{note}/sign', [ClinicalNoteController::class, 'sign'])->name('encounters.notes.sign');
     Route::post('encounters/{encounter}/notes/{note}/amend', [ClinicalNoteController::class, 'amend'])->name('encounters.notes.amend');
     Route::post('encounters/{encounter}/odontogram-entries', [OdontogramEntryController::class, 'store'])->name('encounters.odontogram-entries.store');
+    Route::post('encounters/{encounter}/diagnoses', [EncounterDiagnosisController::class, 'store'])->name('encounters.diagnoses.store');
+    Route::patch('encounters/{encounter}/diagnoses/{encounterDiagnosis}/status', [EncounterDiagnosisController::class, 'updateStatus'])->name('encounters.diagnoses.status');
 
     Route::get('queue', [QueueEntryController::class, 'index'])->name('queue.index');
     Route::post('queue', [QueueEntryController::class, 'store'])->name('queue.store');
@@ -86,6 +90,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('procedure-categories', ProcedureCategoryController::class)->except('show');
         Route::resource('procedures', ProcedureController::class)->except('show');
         Route::resource('tooth-conditions', ToothConditionController::class)->except('show');
+        Route::resource('diagnoses', DiagnosisController::class)->except('show');
         Route::resource('providers', ProviderController::class)->except('show');
         Route::resource('chairs', ChairController::class)->except('show');
         Route::resource('appointment-types', AppointmentTypeController::class)->except('show');

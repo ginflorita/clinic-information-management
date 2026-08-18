@@ -109,6 +109,32 @@
                 <a href="{{ route('patients.odontogram.show', $patient) }}" class="btn btn-sm btn-outline-secondary">View Chart</a>
             </div>
 
+            {{-- Diagnoses --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Diagnoses</h3>
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        @forelse ($patient->diagnoses as $encounterDiagnosis)
+                            <tr>
+                                <td>
+                                    <span class="badge text-bg-{{ match($encounterDiagnosis->status) { 'suspected' => 'secondary', 'active' => 'danger', 'resolved' => 'success', 'historical' => 'secondary', default => 'secondary' } }} text-capitalize">
+                                        {{ $encounterDiagnosis->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $encounterDiagnosis->diagnosis->name }}</td>
+                                <td>{{ $encounterDiagnosis->tooth?->tooth_code ?: '—' }}</td>
+                                <td>{{ $encounterDiagnosis->diagnosed_at->format('Y-m-d') }}</td>
+                                <td class="text-end">
+                                    <a href="{{ route('encounters.show', $encounterDiagnosis->encounter) }}" class="small">View encounter</a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No diagnoses on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
             {{-- Medical Conditions --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Medical Conditions</h3>
