@@ -27,6 +27,8 @@ use App\Http\Controllers\PatientIdentifierController;
 use App\Http\Controllers\PatientRelationshipController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QueueEntryController;
+use App\Http\Controllers\TreatmentPlanController;
+use App\Http\Controllers\TreatmentPlanItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -78,6 +80,11 @@ Route::middleware('auth')->group(function () {
     Route::post('encounters/{encounter}/odontogram-entries', [OdontogramEntryController::class, 'store'])->name('encounters.odontogram-entries.store');
     Route::post('encounters/{encounter}/diagnoses', [EncounterDiagnosisController::class, 'store'])->name('encounters.diagnoses.store');
     Route::patch('encounters/{encounter}/diagnoses/{encounterDiagnosis}/status', [EncounterDiagnosisController::class, 'updateStatus'])->name('encounters.diagnoses.status');
+
+    Route::resource('treatment-plans', TreatmentPlanController::class)->only('index', 'create', 'store', 'show');
+    Route::post('treatment-plans/{treatmentPlan}/transition', [TreatmentPlanController::class, 'transition'])->name('treatment-plans.transition');
+    Route::post('treatment-plans/{treatmentPlan}/items', [TreatmentPlanItemController::class, 'store'])->name('treatment-plans.items.store');
+    Route::patch('treatment-plans/{treatmentPlan}/items/{item}/status', [TreatmentPlanItemController::class, 'updateStatus'])->name('treatment-plans.items.status');
 
     Route::get('queue', [QueueEntryController::class, 'index'])->name('queue.index');
     Route::post('queue', [QueueEntryController::class, 'store'])->name('queue.store');

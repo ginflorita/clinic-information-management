@@ -49,6 +49,8 @@ class PatientController extends Controller
     {
         $patient->load(['addresses', 'contacts', 'relationships.relatedPatient', 'identifiers', 'medicalHistory', 'dentalHistory', 'conditions', 'allergies', 'diagnoses' => function ($query) {
             $query->with(['diagnosis', 'tooth', 'encounter'])->orderByDesc('diagnosed_at');
+        }, 'treatmentPlans' => function ($query) {
+            $query->orderByDesc('created_at');
         }]);
 
         return view('patients.show', ['patient' => $patient]);

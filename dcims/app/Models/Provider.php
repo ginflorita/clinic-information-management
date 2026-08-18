@@ -40,4 +40,9 @@ class Provider extends Model
     {
         return $this->hasMany(Encounter::class);
     }
+
+    public function treatmentPlans(): HasMany
+    {
+        return $this->hasMany(TreatmentPlan::class);
+    }
 }

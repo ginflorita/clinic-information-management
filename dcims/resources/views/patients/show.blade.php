@@ -135,6 +135,31 @@
                 </table>
             </div>
 
+            {{-- Treatment Plans --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Treatment Plans</h3>
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        @forelse ($patient->treatmentPlans as $plan)
+                            <tr>
+                                <td>{{ $plan->plan_number }}</td>
+                                <td>{{ $plan->title }}</td>
+                                <td>
+                                    <span class="badge text-bg-{{ match($plan->status) { 'draft' => 'secondary', 'presented' => 'primary', 'accepted', 'partially_accepted' => 'info', 'completed' => 'success', 'declined', 'cancelled', 'expired' => 'danger', default => 'secondary' } }} text-capitalize">
+                                        {{ str_replace('_', ' ', $plan->status) }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ route('treatment-plans.show', $plan) }}" class="small">View plan</a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No treatment plans on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
             {{-- Medical Conditions --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Medical Conditions</h3>
