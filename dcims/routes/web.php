@@ -15,6 +15,8 @@ use App\Http\Controllers\ClinicalNoteController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
 use App\Http\Controllers\EncounterDiagnosisController;
+use App\Http\Controllers\InvoiceAdjustmentController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\OdontogramController;
 use App\Http\Controllers\OdontogramEntryController;
@@ -25,6 +27,7 @@ use App\Http\Controllers\PatientContactController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientIdentifierController;
 use App\Http\Controllers\PatientRelationshipController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProcedureRecordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QueueEntryController;
@@ -83,11 +86,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('encounters/{encounter}/diagnoses/{encounterDiagnosis}/status', [EncounterDiagnosisController::class, 'updateStatus'])->name('encounters.diagnoses.status');
     Route::post('encounters/{encounter}/procedure-records', [ProcedureRecordController::class, 'store'])->name('encounters.procedure-records.store');
     Route::post('encounters/{encounter}/procedure-records/{procedureRecord}/void', [ProcedureRecordController::class, 'void'])->name('encounters.procedure-records.void');
+    Route::post('encounters/{encounter}/invoice', [InvoiceController::class, 'generateFromEncounter'])->name('encounters.invoice.generate');
 
     Route::resource('treatment-plans', TreatmentPlanController::class)->only('index', 'create', 'store', 'show');
     Route::post('treatment-plans/{treatmentPlan}/transition', [TreatmentPlanController::class, 'transition'])->name('treatment-plans.transition');
     Route::post('treatment-plans/{treatmentPlan}/items', [TreatmentPlanItemController::class, 'store'])->name('treatment-plans.items.store');
     Route::patch('treatment-plans/{treatmentPlan}/items/{item}/status', [TreatmentPlanItemController::class, 'updateStatus'])->name('treatment-plans.items.status');
+
+    Route::resource('invoices', InvoiceController::class)->only('index', 'show');
+    Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])->name('invoices.payments.store');
+    Route::post('invoices/{invoice}/payments/{payment}/void', [PaymentController::class, 'void'])->name('invoices.payments.void');
+    Route::post('invoices/{invoice}/adjustments', [InvoiceAdjustmentController::class, 'store'])->name('invoices.adjustments.store');
 
     Route::get('queue', [QueueEntryController::class, 'index'])->name('queue.index');
     Route::post('queue', [QueueEntryController::class, 'store'])->name('queue.store');

@@ -187,6 +187,32 @@
                 </table>
             </div>
 
+            {{-- Invoices --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Invoices</h3>
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        @forelse ($patient->invoices as $invoice)
+                            <tr>
+                                <td>{{ $invoice->invoice_number }}</td>
+                                <td>{{ $invoice->invoice_date->format('Y-m-d') }}</td>
+                                <td>{{ number_format($invoice->total_amount, 2) }}</td>
+                                <td>
+                                    <span class="{{ $invoice->balance > 0 ? 'text-danger' : 'text-success' }}">
+                                        {{ number_format($invoice->balance, 2) }}
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ route('invoices.show', $invoice) }}" class="small">View invoice</a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No invoices on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
             {{-- Medical Conditions --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Medical Conditions</h3>

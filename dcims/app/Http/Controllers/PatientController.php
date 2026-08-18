@@ -53,6 +53,8 @@ class PatientController extends Controller
             $query->orderByDesc('created_at');
         }, 'procedureRecords' => function ($query) {
             $query->with(['procedure', 'tooth', 'encounter'])->orderByDesc('performed_at');
+        }, 'invoices' => function ($query) {
+            $query->orderByDesc('invoice_date');
         }]);
 
         return view('patients.show', ['patient' => $patient]);

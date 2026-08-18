@@ -92,4 +92,9 @@ class Encounter extends Model
     {
         return $this->hasMany(ProcedureRecord::class);
     }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }

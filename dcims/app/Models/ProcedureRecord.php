@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
 class ProcedureRecord extends Model
@@ -71,5 +72,10 @@ class ProcedureRecord extends Model
     public function treatmentPlanItem(): BelongsTo
     {
         return $this->belongsTo(TreatmentPlanItem::class);
+    }
+
+    public function invoiceItem(): HasOne
+    {
+        return $this->hasOne(InvoiceItem::class);
     }
 }

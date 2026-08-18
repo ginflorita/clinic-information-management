@@ -79,11 +79,16 @@ class EncounterController extends Controller
             $query->with(['diagnosis', 'tooth'])->orderByDesc('diagnosed_at');
         }, 'procedureRecords' => function ($query) {
             $query->with(['procedure', 'tooth', 'treatmentPlanItem'])->orderByDesc('performed_at');
-        }]);
+        }, 'invoices']);
 
         $outstandingPlanItems = TreatmentPlanItem::whereHas('treatmentPlan', function ($query) use ($encounter) {
             $query->where('patient_id', $encounter->patient_id);
         })->where('status', 'accepted')->with(['procedure', 'tooth', 'treatmentPlan'])->get();
+
+        $uninvoicedCompletedProcedures = $encounter->procedureRecords()
+            ->where('status', 'completed')
+            ->whereDoesntHave('invoiceItem')
+            ->count();
 
         return view('encounters.show', [
             'encounter' => $encounter,
@@ -94,6 +99,7 @@ class EncounterController extends Controller
             'diagnosisStatuses' => EncounterDiagnosis::STATUSES,
             'procedures' => Procedure::where('is_active', true)->orderBy('name')->get(),
             'outstandingPlanItems' => $outstandingPlanItems,
+            'uninvoicedCompletedProcedures' => $uninvoicedCompletedProcedures,
         ]);
     }
 

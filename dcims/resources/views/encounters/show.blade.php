@@ -7,12 +7,20 @@
                     {{ str_replace('_', ' ', $encounter->status) }}
                 </span>
             </h2>
-            @if ($encounter->status !== 'completed')
-                <form method="POST" action="{{ route('encounters.complete', $encounter) }}" onsubmit="return confirm('Complete this encounter?');">
-                    @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-success">Complete Encounter</button>
-                </form>
-            @endif
+            <div class="d-flex gap-2">
+                @if ($uninvoicedCompletedProcedures > 0)
+                    <form method="POST" action="{{ route('encounters.invoice.generate', $encounter) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Generate Invoice ({{ $uninvoicedCompletedProcedures }})</button>
+                    </form>
+                @endif
+                @if ($encounter->status !== 'completed')
+                    <form method="POST" action="{{ route('encounters.complete', $encounter) }}" onsubmit="return confirm('Complete this encounter?');">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-success">Complete Encounter</button>
+                    </form>
+                @endif
+            </div>
         </div>
     </x-slot>
 
@@ -36,6 +44,16 @@
                 </div>
                 @if ($encounter->chief_complaint)
                     <p class="mt-3 mb-0"><strong>Chief complaint:</strong> {{ $encounter->chief_complaint }}</p>
+                @endif
+                @if ($encounter->invoices->isNotEmpty())
+                    <div class="mt-3 pt-3 border-top">
+                        <small class="text-secondary d-block mb-1">Invoices</small>
+                        @foreach ($encounter->invoices as $invoice)
+                            <a href="{{ route('invoices.show', $invoice) }}" class="badge text-bg-light text-dark border me-1">
+                                {{ $invoice->invoice_number }} — Balance {{ number_format($invoice->balance, 2) }}
+                            </a>
+                        @endforeach
+                    </div>
                 @endif
             </div>
 
