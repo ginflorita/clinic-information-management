@@ -8,9 +8,11 @@ use App\Models\Encounter;
 use App\Models\EncounterDiagnosis;
 use App\Models\OdontogramEntrySurface;
 use App\Models\Patient;
+use App\Models\Procedure;
 use App\Models\Provider;
 use App\Models\Tooth;
 use App\Models\ToothCondition;
+use App\Models\TreatmentPlanItem;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -75,7 +77,13 @@ class EncounterController extends Controller
             $query->with(['tooth', 'condition', 'surfaces'])->orderByDesc('created_at');
         }, 'diagnoses' => function ($query) {
             $query->with(['diagnosis', 'tooth'])->orderByDesc('diagnosed_at');
+        }, 'procedureRecords' => function ($query) {
+            $query->with(['procedure', 'tooth', 'treatmentPlanItem'])->orderByDesc('performed_at');
         }]);
+
+        $outstandingPlanItems = TreatmentPlanItem::whereHas('treatmentPlan', function ($query) use ($encounter) {
+            $query->where('patient_id', $encounter->patient_id);
+        })->where('status', 'accepted')->with(['procedure', 'tooth', 'treatmentPlan'])->get();
 
         return view('encounters.show', [
             'encounter' => $encounter,
@@ -84,6 +92,8 @@ class EncounterController extends Controller
             'surfaces' => OdontogramEntrySurface::SURFACES,
             'diagnosisOptions' => Diagnosis::where('is_active', true)->orderBy('name')->get(),
             'diagnosisStatuses' => EncounterDiagnosis::STATUSES,
+            'procedures' => Procedure::where('is_active', true)->orderBy('name')->get(),
+            'outstandingPlanItems' => $outstandingPlanItems,
         ]);
     }
 

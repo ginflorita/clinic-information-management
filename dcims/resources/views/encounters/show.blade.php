@@ -258,6 +258,89 @@
                     <p class="text-secondary small mb-0">No chart entries recorded this visit yet.</p>
                 @endforelse
             </div>
+
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Procedures Performed</h3>
+
+                <div class="d-flex flex-column gap-2 mb-3">
+                    @forelse ($encounter->procedureRecords as $record)
+                        <div class="border rounded p-2 d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge text-bg-{{ $record->status === 'completed' ? 'success' : 'secondary' }} text-capitalize">
+                                    {{ $record->status }}
+                                </span>
+                                <span class="fw-medium ms-1">{{ $record->procedure->name }}</span>
+                                @if ($record->tooth)
+                                    <span class="text-secondary">— Tooth {{ $record->tooth->tooth_code }}</span>
+                                @endif
+                                <span class="text-secondary">× {{ $record->quantity }} @ {{ number_format($record->unit_price, 2) }} = {{ number_format($record->total_amount, 2) }}</span>
+                                @if ($record->treatmentPlanItem)
+                                    <div class="text-secondary small">From plan item: {{ $record->treatmentPlanItem->procedure->name ?? '—' }}</div>
+                                @endif
+                                @if ($record->notes)
+                                    <div class="text-secondary small">{{ $record->notes }}</div>
+                                @endif
+                            </div>
+                            @if ($record->status === 'completed')
+                                <form method="POST" action="{{ route('encounters.procedure-records.void', [$encounter, $record]) }}" onsubmit="return confirm('Void this procedure record?');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Void</button>
+                                </form>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="text-secondary mb-0">No procedures recorded for this encounter.</p>
+                    @endforelse
+                </div>
+
+                <form method="POST" action="{{ route('encounters.procedure-records.store', $encounter) }}">
+                    @csrf
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <x-input-label for="procedure_record_procedure_id" value="Procedure" />
+                            <select id="procedure_record_procedure_id" name="procedure_id" class="form-select form-select-sm" required>
+                                <option value="">Procedure...</option>
+                                @foreach ($procedures as $procedure)
+                                    <option value="{{ $procedure->id }}">{{ $procedure->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <x-input-label for="procedure_record_tooth_id" value="Tooth" />
+                            <select id="procedure_record_tooth_id" name="tooth_id" class="form-select form-select-sm">
+                                <option value="">Optional...</option>
+                                @foreach ($teeth as $tooth)
+                                    <option value="{{ $tooth->id }}">{{ $tooth->tooth_code }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <x-input-label for="procedure_record_plan_item" value="From Plan Item" />
+                            <select id="procedure_record_plan_item" name="treatment_plan_item_id" class="form-select form-select-sm">
+                                <option value="">None...</option>
+                                @foreach ($outstandingPlanItems as $planItem)
+                                    <option value="{{ $planItem->id }}">
+                                        {{ $planItem->treatmentPlan->plan_number }}: {{ $planItem->procedure->name }}
+                                        @if ($planItem->tooth) (Tooth {{ $planItem->tooth->tooth_code }}) @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <x-input-label for="procedure_record_quantity" value="Qty" />
+                            <input type="number" id="procedure_record_quantity" name="quantity" class="form-control form-control-sm" value="1" min="1" required>
+                        </div>
+                        <div class="col-md-2">
+                            <x-input-label for="procedure_record_unit_price" value="Unit Price" />
+                            <input type="number" id="procedure_record_unit_price" name="unit_price" class="form-control form-control-sm" step="0.01" min="0" placeholder="From procedure">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-sm btn-outline-primary w-100">Add</button>
+                        </div>
+                    </div>
+                    <textarea name="notes" class="form-control form-control-sm mt-2" rows="1" placeholder="Notes (optional)"></textarea>
+                </form>
+            </div>
         </div>
     </div>
 </x-app-layout>

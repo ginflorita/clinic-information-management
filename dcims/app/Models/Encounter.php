@@ -87,4 +87,9 @@ class Encounter extends Model
     {
         return $this->hasMany(EncounterDiagnosis::class);
     }
+
+    public function procedureRecords(): HasMany
+    {
+        return $this->hasMany(ProcedureRecord::class);
+    }
 }

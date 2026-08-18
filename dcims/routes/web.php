@@ -25,6 +25,7 @@ use App\Http\Controllers\PatientContactController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientIdentifierController;
 use App\Http\Controllers\PatientRelationshipController;
+use App\Http\Controllers\ProcedureRecordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QueueEntryController;
 use App\Http\Controllers\TreatmentPlanController;
@@ -80,6 +81,8 @@ Route::middleware('auth')->group(function () {
     Route::post('encounters/{encounter}/odontogram-entries', [OdontogramEntryController::class, 'store'])->name('encounters.odontogram-entries.store');
     Route::post('encounters/{encounter}/diagnoses', [EncounterDiagnosisController::class, 'store'])->name('encounters.diagnoses.store');
     Route::patch('encounters/{encounter}/diagnoses/{encounterDiagnosis}/status', [EncounterDiagnosisController::class, 'updateStatus'])->name('encounters.diagnoses.status');
+    Route::post('encounters/{encounter}/procedure-records', [ProcedureRecordController::class, 'store'])->name('encounters.procedure-records.store');
+    Route::post('encounters/{encounter}/procedure-records/{procedureRecord}/void', [ProcedureRecordController::class, 'void'])->name('encounters.procedure-records.void');
 
     Route::resource('treatment-plans', TreatmentPlanController::class)->only('index', 'create', 'store', 'show');
     Route::post('treatment-plans/{treatmentPlan}/transition', [TreatmentPlanController::class, 'transition'])->name('treatment-plans.transition');

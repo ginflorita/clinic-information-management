@@ -143,4 +143,9 @@ class Patient extends Model
     {
         return $this->hasMany(TreatmentPlan::class);
     }
+
+    public function procedureRecords(): HasMany
+    {
+        return $this->hasMany(ProcedureRecord::class);
+    }
 }

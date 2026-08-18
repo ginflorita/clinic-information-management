@@ -51,6 +51,8 @@ class PatientController extends Controller
             $query->with(['diagnosis', 'tooth', 'encounter'])->orderByDesc('diagnosed_at');
         }, 'treatmentPlans' => function ($query) {
             $query->orderByDesc('created_at');
+        }, 'procedureRecords' => function ($query) {
+            $query->with(['procedure', 'tooth', 'encounter'])->orderByDesc('performed_at');
         }]);
 
         return view('patients.show', ['patient' => $patient]);

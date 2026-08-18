@@ -160,6 +160,33 @@
                 </table>
             </div>
 
+            {{-- Procedures Performed --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Procedures Performed</h3>
+                <table class="table table-sm mb-0">
+                    <tbody>
+                        @forelse ($patient->procedureRecords as $record)
+                            <tr>
+                                <td>
+                                    <span class="badge text-bg-{{ $record->status === 'completed' ? 'success' : 'secondary' }} text-capitalize">
+                                        {{ $record->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $record->procedure->name }}</td>
+                                <td>{{ $record->tooth?->tooth_code ?: '—' }}</td>
+                                <td>{{ number_format($record->total_amount, 2) }}</td>
+                                <td>{{ $record->performed_at->format('Y-m-d') }}</td>
+                                <td class="text-end">
+                                    <a href="{{ route('encounters.show', $record->encounter) }}" class="small">View encounter</a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No procedures on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
             {{-- Medical Conditions --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Medical Conditions</h3>
