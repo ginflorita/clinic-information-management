@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\ToothConditionController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClinicalNoteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
 use App\Http\Controllers\EncounterDiagnosisController;
@@ -41,9 +42,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
