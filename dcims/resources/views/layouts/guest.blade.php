@@ -8,13 +8,15 @@
         <title>{{ config('app.name', 'DCIMS') }}</title>
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/vendor.css', 'resources/css/app.scss', 'resources/js/app.js'])
     </head>
     <body class="bg-light">
         <div class="min-vh-100 d-flex flex-column justify-content-center align-items-center py-4">
             <div class="mb-4">
-                <a href="/">
-                    <x-application-logo style="width: 4rem; height: 4rem;" class="text-secondary" />
+                <a href="/" class="d-inline-flex">
+                    <span class="bg-dark rounded d-inline-flex align-items-center px-3 py-2">
+                        <img src="{{ asset('images/ginflorita-logo.png') }}" alt="DCIMS" style="height: 2.25rem; width: auto;">
+                    </span>
                 </a>
             </div>
 

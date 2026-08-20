@@ -1,11 +1,20 @@
 {
-  "resources/css/app.css": {
-    "file": "assets/app-BFICighK.css",
-    "src": "resources/css/app.css",
+  "resources/css/app.scss": {
+    "file": "assets/app-BHATxOQd.css",
+    "src": "resources/css/app.scss",
     "isEntry": true,
     "name": "app",
     "names": [
       "app.css"
+    ]
+  },
+  "resources/css/vendor.css": {
+    "file": "assets/vendor-eLrOgUoO.css",
+    "src": "resources/css/vendor.css",
+    "isEntry": true,
+    "name": "vendor",
+    "names": [
+      "vendor.css"
     ]
   },
   "resources/js/app.js": {

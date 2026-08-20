@@ -8,7 +8,7 @@
         <title>{{ config('app.name', 'DCIMS') }}</title>
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/vendor.css', 'resources/css/app.scss', 'resources/js/app.js'])
     </head>
     <body class="bg-light">
         <div class="min-vh-100 d-flex flex-column">
