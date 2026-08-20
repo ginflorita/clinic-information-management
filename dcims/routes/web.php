@@ -28,6 +28,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientIdentifierController;
 use App\Http\Controllers\PatientLedgerController;
 use App\Http\Controllers\PatientRelationshipController;
+use App\Http\Controllers\PatientTimelineController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProcedureRecordController;
 use App\Http\Controllers\ProfileController;
@@ -71,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::get('patients/{patient}/odontogram', [OdontogramController::class, 'show'])->name('patients.odontogram.show');
     Route::post('patients/{patient}/payments', [PaymentController::class, 'storeSplit'])->name('patients.payments.store');
     Route::get('patients/{patient}/ledger', [PatientLedgerController::class, 'show'])->name('patients.ledger.show');
+    Route::get('patients/{patient}/timeline', [PatientTimelineController::class, 'show'])->name('patients.timeline.show');
 
     Route::resource('appointments', AppointmentController::class)->except('destroy', 'show');
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');

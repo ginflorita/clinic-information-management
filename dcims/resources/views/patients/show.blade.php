@@ -8,6 +8,7 @@
                 </span>
             </h2>
             <div class="d-flex gap-2">
+                <a href="{{ route('patients.timeline.show', $patient) }}" class="btn btn-sm btn-primary">Timeline</a>
                 <a href="{{ route('patients.edit', $patient) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @if ($patient->status === 'archived')
                     <form method="POST" action="{{ route('patients.restore', $patient) }}">
