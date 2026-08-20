@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom">
     <div class="container-fluid px-4">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            <x-application-logo style="height: 2rem; width: auto;" class="text-secondary" />
+        <a class="navbar-brand d-inline-flex" href="{{ route('dashboard') }}">
+            <span class="bg-dark rounded d-inline-flex align-items-center px-2 py-1">
+                <img src="{{ asset('images/ginflorita-logo.png') }}" alt="DCIMS" style="height: 1.75rem; width: auto;">
+            </span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
