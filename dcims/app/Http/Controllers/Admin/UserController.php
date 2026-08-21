@@ -60,8 +60,11 @@ class UserController extends Controller
 
         $user->name = $data['name'];
         $user->email = $data['email'];
-        $user->is_admin = $request->boolean('is_admin');
-        $user->is_active = $request->boolean('is_active');
+
+        if ($user->isNot($request->user())) {
+            $user->is_admin = $request->boolean('is_admin');
+            $user->is_active = $request->boolean('is_active');
+        }
 
         if (! empty($data['password'])) {
             $user->password = Hash::make($data['password']);

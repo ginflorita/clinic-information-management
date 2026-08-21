@@ -27,16 +27,22 @@
     </div>
 </div>
 
+@php $isSelf = isset($user) && $user->is(auth()->user()); @endphp
+
 <div class="mb-3 form-check">
-    <input id="is_admin" type="checkbox" name="is_admin" value="1" class="form-check-input" @checked(old('is_admin', $user->is_admin ?? false))>
+    <input id="is_admin" type="checkbox" name="is_admin" value="1" class="form-check-input" @checked(old('is_admin', $user->is_admin ?? false)) @disabled($isSelf)>
     <label class="form-check-label" for="is_admin">Administrator (can manage users)</label>
 </div>
 
 @if (isset($user))
     <div class="mb-3 form-check">
-        <input id="is_active" type="checkbox" name="is_active" value="1" class="form-check-input" @checked(old('is_active', $user->is_active))>
+        <input id="is_active" type="checkbox" name="is_active" value="1" class="form-check-input" @checked(old('is_active', $user->is_active)) @disabled($isSelf)>
         <label class="form-check-label" for="is_active">Active (can log in)</label>
     </div>
+@endif
+
+@if ($isSelf)
+    <p class="small text-secondary">You can't change your own admin or active status — ask another admin.</p>
 @endif
 
 <div class="d-flex gap-2">

@@ -135,4 +135,22 @@ class UserManagementTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_an_admin_cannot_demote_or_deactivate_their_own_account(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $this->actingAs($admin)
+            ->put(route('admin.users.update', $admin), [
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'is_admin' => '0',
+                'is_active' => '0',
+            ])
+            ->assertRedirect(route('admin.users.index'));
+
+        $admin->refresh();
+        $this->assertTrue($admin->is_admin);
+        $this->assertTrue($admin->is_active);
+    }
 }
