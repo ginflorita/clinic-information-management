@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use LogicException;
 
 class TreatmentPlan extends Model
 {
-    use HasFactory;
+    use Auditable, HasFactory;
 
     const STATUSES = ['draft', 'presented', 'accepted', 'partially_accepted', 'declined', 'completed', 'expired', 'cancelled'];
 
