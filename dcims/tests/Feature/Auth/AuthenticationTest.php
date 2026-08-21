@@ -58,4 +58,16 @@ class AuthenticationTest extends TestCase
 
         $response->assertRedirect(route('login', absolute: false));
     }
+
+    public function test_a_deactivated_user_cannot_authenticate(): void
+    {
+        $user = User::factory()->inactive()->create();
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+    }
 }

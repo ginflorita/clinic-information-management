@@ -3,6 +3,7 @@
 namespace App\Models\Concerns;
 
 use App\Models\AuditLog;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -17,12 +18,11 @@ trait Auditable
     protected static function bootAuditable(): void
     {
         static::created(function ($model) {
-            $model->recordAuditLog('create', null, $model->getAttributes());
+            $model->recordAuditLog('create', null, $model->auditableAttributes());
         });
 
         static::updated(function ($model) {
-            $changes = $model->getChanges();
-            unset($changes['updated_at']);
+            $changes = Arr::except($model->getChanges(), array_merge($model->getHidden(), ['updated_at']));
 
             if (empty($changes)) {
                 return;
@@ -32,8 +32,18 @@ trait Auditable
         });
 
         static::deleted(function ($model) {
-            $model->recordAuditLog('delete', $model->getAttributes(), null);
+            $model->recordAuditLog('delete', $model->auditableAttributes(), null);
         });
+    }
+
+    /**
+     * Attributes are excluded via $hidden rather than logged in full —
+     * hidden fields (e.g. User's password/remember_token) never belong in
+     * an audit trail even hashed.
+     */
+    protected function auditableAttributes(): array
+    {
+        return Arr::except($this->getAttributes(), $this->getHidden());
     }
 
     protected function recordAuditLog(string $action, ?array $oldValues, ?array $newValues): void
