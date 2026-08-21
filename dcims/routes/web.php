@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProcedureController;
 use App\Http\Controllers\Admin\ProviderController;
 use App\Http\Controllers\Admin\ToothConditionController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClinicalNoteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DentalHistoryController;
@@ -108,6 +109,8 @@ Route::middleware('auth')->group(function () {
     Route::post('queue/{queueEntry}/start', [QueueEntryController::class, 'start'])->name('queue.start');
     Route::post('queue/{queueEntry}/complete', [QueueEntryController::class, 'complete'])->name('queue.complete');
     Route::post('queue/{queueEntry}/skip', [QueueEntryController::class, 'skip'])->name('queue.skip');
+
+    Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('procedure-categories', ProcedureCategoryController::class)->except('show');
