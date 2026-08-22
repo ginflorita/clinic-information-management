@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProcedureCategoryController;
 use App\Http\Controllers\Admin\ProcedureController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProviderController;
+use App\Http\Controllers\Admin\RecallTypeController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ToothConditionController;
 use App\Http\Controllers\Admin\UserController;
@@ -48,6 +49,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseOrderItemController;
 use App\Http\Controllers\QueueEntryController;
+use App\Http\Controllers\RecallController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentPlanItemController;
@@ -88,6 +90,7 @@ Route::middleware('auth')->group(function () {
     Route::post('patients/{patient}/payments', [PaymentController::class, 'storeSplit'])->name('patients.payments.store');
     Route::get('patients/{patient}/ledger', [PatientLedgerController::class, 'show'])->name('patients.ledger.show');
     Route::get('patients/{patient}/timeline', [PatientTimelineController::class, 'show'])->name('patients.timeline.show');
+    Route::post('patients/{patient}/recalls', [RecallController::class, 'store'])->name('patients.recalls.store');
 
     Route::resource('appointments', AppointmentController::class)->except('destroy', 'show');
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
@@ -131,6 +134,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
 
+    Route::get('recalls', [RecallController::class, 'index'])->name('recalls.index');
+    Route::post('recalls/{recall}/complete', [RecallController::class, 'complete'])->name('recalls.complete');
+    Route::post('recalls/{recall}/cancel', [RecallController::class, 'cancel'])->name('recalls.cancel');
+
     Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::get('inventory/{product}', [InventoryController::class, 'show'])->name('inventory.show');
     Route::post('inventory/{product}/batches', [ProductBatchController::class, 'store'])->name('inventory.batches.store');
@@ -148,6 +155,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('tooth-conditions', ToothConditionController::class)->except('show');
         Route::resource('diagnoses', DiagnosisController::class)->except('show');
         Route::resource('medications', MedicationController::class)->except('show');
+        Route::resource('recall-types', RecallTypeController::class)->except('show');
         Route::resource('providers', ProviderController::class)->except('show');
         Route::resource('chairs', ChairController::class)->except('show');
         Route::resource('appointment-types', AppointmentTypeController::class)->except('show');

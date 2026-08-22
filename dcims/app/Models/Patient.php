@@ -145,6 +145,11 @@ class Patient extends Model
         return $this->hasMany(Prescription::class);
     }
 
+    public function recalls(): HasMany
+    {
+        return $this->hasMany(Recall::class);
+    }
+
     public function diagnoses(): HasMany
     {
         return $this->hasMany(EncounterDiagnosis::class);
