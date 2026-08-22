@@ -29,9 +29,21 @@
 
 @php $isSelf = isset($user) && $user->is(auth()->user()); @endphp
 
+<div class="mb-3">
+    <x-input-label for="role_id" value="Role" />
+    <select id="role_id" name="role_id" class="form-select">
+        <option value="">No role (full access)</option>
+        @foreach ($roles as $role)
+            <option value="{{ $role->id }}" @selected(old('role_id', $user->role_id ?? '') == $role->id)>{{ $role->name }}</option>
+        @endforeach
+    </select>
+    <small class="text-secondary d-block mt-1">Restricts which modules this user can see and use. Leave unset for full access.</small>
+    <x-input-error :messages="$errors->get('role_id')" class="mt-1" />
+</div>
+
 <div class="mb-3 form-check">
     <input id="is_admin" type="checkbox" name="is_admin" value="1" class="form-check-input" @checked(old('is_admin', $user->is_admin ?? false)) @disabled($isSelf)>
-    <label class="form-check-label" for="is_admin">Administrator (can manage users)</label>
+    <label class="form-check-label" for="is_admin">Administrator (full access, bypasses role restrictions, can manage users)</label>
 </div>
 
 @if (isset($user))

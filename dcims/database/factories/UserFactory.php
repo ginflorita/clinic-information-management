@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -54,6 +55,13 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_active' => false,
+        ]);
+    }
+
+    public function withRole(Role|int $role): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id' => is_int($role) ? $role : $role->id,
         ]);
     }
 }
