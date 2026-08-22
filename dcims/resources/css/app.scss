@@ -207,3 +207,97 @@ $dropdown-box-shadow: $box-shadow-lg;
         min-height: 100vh;
     }
 }
+
+// 6. App sidebar ------------------------------------------------------------
+// Primary navigation lives in a fixed-width left sidebar on large screens
+// (there are too many modules for a single-row navbar to hold), collapsing
+// to a slim top bar + off-canvas panel below the lg breakpoint.
+.app-sidebar {
+    width: 260px;
+    flex: 0 0 auto;
+    background-color: $white;
+    border-right: 1px solid $border-color;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    display: inline-flex;
+    padding: 1.25rem 1rem 0.75rem;
+}
+
+.sidebar-nav {
+    padding: 0 0 1rem;
+}
+
+.sidebar-section {
+    margin-top: 1.25rem;
+}
+
+.sidebar-section-title {
+    padding: 0 1rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $secondary;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 1rem);
+    margin: 0.0625rem 0.5rem;
+    padding: 0.4rem 0.75rem;
+    border: none;
+    border-radius: $border-radius-sm;
+    background: none;
+    color: $body-color;
+    font-size: 0.875rem;
+    text-align: left;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-link:hover {
+    background-color: $light;
+    color: $body-color;
+}
+
+.sidebar-link.active {
+    background-color: var(--bs-primary-bg-subtle);
+    color: var(--bs-primary-text-emphasis);
+    font-weight: 500;
+}
+
+.sidebar-link-toggle .sidebar-chevron {
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+.sidebar-link-toggle.collapsed .sidebar-chevron {
+    transform: rotate(-90deg);
+}
+
+.sidebar-subnav {
+    margin-top: 0.125rem;
+}
+
+.sidebar-subnav .sidebar-link {
+    padding-left: 1.75rem;
+    font-size: 0.8125rem;
+}
+
+.sidebar-user {
+    border-top: 1px solid $border-color;
+    padding: 0.5rem;
+}
+
+.sidebar-user .sidebar-link {
+    width: 100%;
+    margin: 0;
+}
