@@ -45,4 +45,9 @@
             </x-primary-button>
         </div>
     </form>
+
+    <p class="text-secondary small text-center mt-4 mb-0">
+        {{ __('To request access to the demo system, please contact the developer at') }}
+        <a href="mailto:ask.ginflorita@gmail.com" class="text-decoration-underline">ask.ginflorita@gmail.com</a>.
+    </p>
 </x-auth-split-layout>
