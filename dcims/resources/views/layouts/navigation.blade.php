@@ -84,6 +84,7 @@
                         <li><a class="dropdown-item" href="{{ route('admin.tooth-conditions.index') }}">{{ __('Tooth Conditions') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.medications.index') }}">{{ __('Medications') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.recall-types.index') }}">{{ __('Recall Types') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.consent-types.index') }}">{{ __('Consent Types') }}</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{{ route('admin.providers.index') }}">{{ __('Providers') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.chairs.index') }}">{{ __('Chairs') }}</a></li>
