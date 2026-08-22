@@ -103,4 +103,9 @@ class Encounter extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
 }

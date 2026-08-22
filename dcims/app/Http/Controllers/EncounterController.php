@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\Diagnosis;
 use App\Models\Encounter;
 use App\Models\EncounterDiagnosis;
+use App\Models\Medication;
 use App\Models\OdontogramEntrySurface;
 use App\Models\Patient;
 use App\Models\PerioSiteMeasurement;
@@ -82,6 +83,8 @@ class EncounterController extends Controller
             $query->with(['diagnosis', 'tooth'])->orderByDesc('diagnosed_at');
         }, 'procedureRecords' => function ($query) {
             $query->with(['procedure', 'tooth', 'treatmentPlanItem'])->orderByDesc('performed_at');
+        }, 'prescriptions' => function ($query) {
+            $query->with('items.medication')->orderByDesc('created_at');
         }, 'invoices']);
 
         $outstandingPlanItems = TreatmentPlanItem::whereHas('treatmentPlan', function ($query) use ($encounter) {
@@ -102,6 +105,7 @@ class EncounterController extends Controller
             'diagnosisOptions' => Diagnosis::where('is_active', true)->orderBy('name')->get(),
             'diagnosisStatuses' => EncounterDiagnosis::STATUSES,
             'procedures' => Procedure::where('is_active', true)->orderBy('name')->get(),
+            'medications' => Medication::where('is_active', true)->orderBy('generic_name')->get(),
             'outstandingPlanItems' => $outstandingPlanItems,
             'uninvoicedCompletedProcedures' => $uninvoicedCompletedProcedures,
         ]);

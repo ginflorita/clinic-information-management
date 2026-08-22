@@ -119,6 +119,15 @@
                 <a href="{{ route('patients.periodontal.show', $patient) }}" class="btn btn-sm btn-outline-secondary">View Chart</a>
             </div>
 
+            {{-- Prescriptions --}}
+            <div class="bg-white shadow-sm rounded p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="fs-5 fw-medium mb-1">Prescriptions</h3>
+                    <p class="small text-secondary mb-0">Medications prescribed across all visits.</p>
+                </div>
+                <a href="{{ route('patients.prescriptions.show', $patient) }}" class="btn btn-sm btn-outline-secondary">View History</a>
+            </div>
+
             {{-- Diagnoses --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Diagnoses</h3>
