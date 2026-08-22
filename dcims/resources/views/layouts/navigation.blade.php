@@ -48,6 +48,11 @@
                     </x-nav-link>
                 </li>
                 <li class="nav-item">
+                    <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
+                        {{ __('Inventory') }}
+                    </x-nav-link>
+                </li>
+                <li class="nav-item">
                     <x-nav-link :href="route('audit-logs.index')" :active="request()->routeIs('audit-logs.*')">
                         {{ __('Audit Log') }}
                     </x-nav-link>
@@ -75,6 +80,8 @@
                         <li><a class="dropdown-item" href="{{ route('admin.payment-methods.index') }}">{{ __('Payment Methods') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.inventory-categories.index') }}">{{ __('Inventory Categories') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.inventory-units.index') }}">{{ __('Inventory Units') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.products.index') }}">{{ __('Products') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.suppliers.index') }}">{{ __('Suppliers') }}</a></li>
                     </ul>
                 </li>
             </ul>

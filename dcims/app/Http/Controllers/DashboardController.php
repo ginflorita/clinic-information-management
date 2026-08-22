@@ -7,6 +7,8 @@ use App\Models\Encounter;
 use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\Payment;
+use App\Models\Product;
+use App\Models\ProductBatch;
 use App\Models\QueueEntry;
 use App\Models\TreatmentPlan;
 use Illuminate\Support\Collection;
@@ -33,10 +35,8 @@ class DashboardController extends Controller
             'new_patients' => Patient::whereDate('created_at', $today)->count(),
             'pending_treatment_plans' => TreatmentPlan::whereIn('status', ['draft', 'presented'])->count(),
             'follow_up_patients' => (clone $todaysAppointments)->whereHas('appointmentType', fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', ['%follow%']))->distinct('patient_id')->count('patient_id'),
-            // Inventory isn't built until Step 19 — stubbed to zero rather than
-            // faking a query against a table that doesn't exist yet.
-            'low_stock_items' => 0,
-            'expiring_inventory' => 0,
+            'low_stock_items' => Product::where('is_active', true)->withSum('batches', 'quantity')->get()->filter->isLowStock()->count(),
+            'expiring_inventory' => ProductBatch::expiringWithin(InventoryController::EXPIRY_WARNING_DAYS)->count(),
         ];
 
         return view('dashboard', [

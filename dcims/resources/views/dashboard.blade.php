@@ -83,13 +83,13 @@
                 <div class="col">
                     <div class="bg-white shadow-sm rounded p-3">
                         <small class="text-secondary d-block">Low-stock Items</small>
-                        <span class="fs-4 fw-semibold text-secondary">{{ $metrics['low_stock_items'] }}</span>
+                        <span class="fs-4 fw-semibold {{ $metrics['low_stock_items'] > 0 ? 'text-danger' : '' }}">{{ $metrics['low_stock_items'] }}</span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="bg-white shadow-sm rounded p-3">
                         <small class="text-secondary d-block">Expiring Inventory</small>
-                        <span class="fs-4 fw-semibold text-secondary">{{ $metrics['expiring_inventory'] }}</span>
+                        <span class="fs-4 fw-semibold {{ $metrics['expiring_inventory'] > 0 ? 'text-danger' : '' }}">{{ $metrics['expiring_inventory'] }}</span>
                     </div>
                 </div>
             </div>
