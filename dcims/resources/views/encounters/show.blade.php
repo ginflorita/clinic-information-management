@@ -278,6 +278,111 @@
             </div>
 
             <div class="bg-white shadow-sm rounded p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-medium mb-0">Periodontal Chart</h3>
+                    <a href="{{ route('patients.periodontal.show', $encounter->patient) }}" class="small">View full chart history</a>
+                </div>
+
+                <p class="text-secondary small mb-2">Click a tooth to record probing depths.</p>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                    @foreach ($teeth as $tooth)
+                        <button type="button" class="btn btn-sm btn-outline-dark" style="width: 3rem;" data-bs-toggle="collapse" data-bs-target="#perio-form-{{ $tooth->id }}">
+                            {{ $tooth->tooth_code }}
+                        </button>
+                    @endforeach
+                </div>
+
+                @foreach ($teeth as $tooth)
+                    <div class="collapse mb-2" id="perio-form-{{ $tooth->id }}">
+                        <form method="POST" action="{{ route('encounters.perio-tooth-records.store', $encounter) }}" class="border rounded p-3">
+                            @csrf
+                            <input type="hidden" name="tooth_id" value="{{ $tooth->id }}">
+                            <p class="fw-medium mb-2 small">Tooth {{ $tooth->tooth_code }} — {{ $tooth->tooth_name }}</p>
+
+                            <table class="table table-sm mb-2">
+                                <thead>
+                                    <tr>
+                                        <th>Site</th>
+                                        <th>Probing Depth</th>
+                                        <th>Recession</th>
+                                        <th>CAL</th>
+                                        <th>Gingival Margin</th>
+                                        <th>BOP</th>
+                                        <th>Plaque</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($perioSites as $site)
+                                        <tr>
+                                            <td class="text-capitalize">{{ $site }}</td>
+                                            <td><input type="number" step="0.1" min="0" max="20" name="sites[{{ $site }}][probing_depth]" class="form-control form-control-sm" style="width: 5rem;"></td>
+                                            <td><input type="number" step="0.1" name="sites[{{ $site }}][gingival_recession]" class="form-control form-control-sm" style="width: 5rem;"></td>
+                                            <td><input type="number" step="0.1" min="0" max="20" name="sites[{{ $site }}][clinical_attachment_level]" class="form-control form-control-sm" style="width: 5rem;"></td>
+                                            <td><input type="number" step="0.1" name="sites[{{ $site }}][gingival_margin]" class="form-control form-control-sm" style="width: 5rem;"></td>
+                                            <td class="text-center"><input type="checkbox" name="sites[{{ $site }}][bleeding_on_probing]" value="1" class="form-check-input"></td>
+                                            <td class="text-center"><input type="checkbox" name="sites[{{ $site }}][plaque_present]" value="1" class="form-check-input"></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-3">
+                                    <x-input-label value="Mobility (0-3)" />
+                                    <select name="mobility" class="form-select form-select-sm">
+                                        <option value="">—</option>
+                                        @foreach ([0, 1, 2, 3] as $grade)
+                                            <option value="{{ $grade }}">{{ $grade }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <x-input-label value="Furcation (0-3)" />
+                                    <select name="furcation" class="form-select form-select-sm">
+                                        <option value="">—</option>
+                                        @foreach ([0, 1, 2, 3] as $grade)
+                                            <option value="{{ $grade }}">{{ $grade }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="notes" class="form-control form-control-sm" placeholder="Notes (optional)">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary w-100">Record</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                @endforeach
+
+                <h4 class="fs-6 fw-medium mt-4 mb-2">Recorded This Visit</h4>
+                @forelse (($encounter->perioExamination->toothRecords ?? []) as $record)
+                    <div class="border rounded p-2 mb-2 small">
+                        <strong>{{ $record->tooth->tooth_code }}</strong>
+                        @if ($record->mobility !== null)
+                            <span class="text-secondary">Mobility: {{ $record->mobility }}</span>
+                        @endif
+                        @if ($record->furcation !== null)
+                            <span class="text-secondary">Furcation: {{ $record->furcation }}</span>
+                        @endif
+                        <div class="text-secondary">
+                            @foreach ($record->measurements as $measurement)
+                                {{ ucfirst($measurement->site) }}: PD {{ $measurement->probing_depth }}
+                                @if ($measurement->bleeding_on_probing) (BOP) @endif
+                                @if (! $loop->last) &middot; @endif
+                            @endforeach
+                        </div>
+                        @if ($record->notes)
+                            <div class="text-secondary">{{ $record->notes }}</div>
+                        @endif
+                    </div>
+                @empty
+                    <p class="text-secondary small mb-0">No periodontal measurements recorded this visit yet.</p>
+                @endforelse
+            </div>
+
+            <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Procedures Performed</h3>
 
                 <div class="d-flex flex-column gap-2 mb-3">
