@@ -1,0 +1,25 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('goods_receipt_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('goods_receipt_id')->constrained()->restrictOnDelete();
+            $table->foreignId('purchase_order_item_id')->constrained()->restrictOnDelete();
+            $table->foreignId('batch_id')->constrained('product_batches')->restrictOnDelete();
+            $table->decimal('quantity_received', 12, 2);
+            $table->timestampTz('created_at')->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('goods_receipt_items');
+    }
+};

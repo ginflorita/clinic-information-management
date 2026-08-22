@@ -20,6 +20,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
 use App\Http\Controllers\EncounterDiagnosisController;
+use App\Http\Controllers\GoodsReceiptController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceAdjustmentController;
 use App\Http\Controllers\InvoiceController;
@@ -39,6 +40,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProcedureRecordController;
 use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\PurchaseOrderItemController;
 use App\Http\Controllers\QueueEntryController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TreatmentPlanController;
@@ -122,6 +125,11 @@ Route::middleware('auth')->group(function () {
     Route::post('inventory/{product}/batches', [ProductBatchController::class, 'store'])->name('inventory.batches.store');
     Route::post('inventory/{product}/stock-out', [StockMovementController::class, 'stockOut'])->name('inventory.stock-out');
     Route::post('inventory/{product}/adjust', [StockMovementController::class, 'adjust'])->name('inventory.adjust');
+
+    Route::resource('purchase-orders', PurchaseOrderController::class)->only('index', 'create', 'store', 'show');
+    Route::post('purchase-orders/{purchaseOrder}/transition', [PurchaseOrderController::class, 'transition'])->name('purchase-orders.transition');
+    Route::post('purchase-orders/{purchaseOrder}/items', [PurchaseOrderItemController::class, 'store'])->name('purchase-orders.items.store');
+    Route::post('purchase-orders/{purchaseOrder}/receipts', [GoodsReceiptController::class, 'store'])->name('purchase-orders.receipts.store');
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('procedure-categories', ProcedureCategoryController::class)->except('show');

@@ -53,6 +53,11 @@
                     </x-nav-link>
                 </li>
                 <li class="nav-item">
+                    <x-nav-link :href="route('purchase-orders.index')" :active="request()->routeIs('purchase-orders.*')">
+                        {{ __('Purchase Orders') }}
+                    </x-nav-link>
+                </li>
+                <li class="nav-item">
                     <x-nav-link :href="route('audit-logs.index')" :active="request()->routeIs('audit-logs.*')">
                         {{ __('Audit Log') }}
                     </x-nav-link>
