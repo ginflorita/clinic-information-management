@@ -464,6 +464,131 @@
                     <textarea name="notes" class="form-control form-control-sm mt-2" rows="1" placeholder="Notes (optional)"></textarea>
                 </form>
             </div>
+
+            <div class="bg-white shadow-sm rounded p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-medium mb-0">Prescriptions</h3>
+                    <a href="{{ route('patients.prescriptions.show', $encounter->patient) }}" class="small">View full prescription history</a>
+                </div>
+
+                <div class="d-flex flex-column gap-3 mb-3">
+                    @forelse ($encounter->prescriptions as $prescription)
+                        <div class="border rounded p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <span class="badge text-bg-{{ $prescription->status === 'active' ? 'success' : 'secondary' }} text-capitalize">
+                                        {{ $prescription->status }}
+                                    </span>
+                                    <span class="fw-medium ms-1">{{ $prescription->prescription_number }}</span>
+                                    <span class="text-secondary small">{{ $prescription->prescribed_at->format('Y-m-d') }}</span>
+                                    @if ($prescription->notes)
+                                        <div class="text-secondary small">{{ $prescription->notes }}</div>
+                                    @endif
+                                </div>
+                                @if ($prescription->status === 'active')
+                                    <form method="POST" action="{{ route('encounters.prescriptions.cancel', [$encounter, $prescription]) }}" onsubmit="return confirm('Cancel this prescription?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <table class="table table-sm mb-2">
+                                <thead>
+                                    <tr>
+                                        <th>Medication</th>
+                                        <th>Dose</th>
+                                        <th>Frequency</th>
+                                        <th>Route</th>
+                                        <th>Duration</th>
+                                        <th>Qty</th>
+                                        <th>Refills</th>
+                                        <th>Instructions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($prescription->items as $item)
+                                        <tr>
+                                            <td>
+                                                {{ $item->medication->generic_name }}
+                                                @if ($item->medication->brand_name)
+                                                    <span class="text-secondary">({{ $item->medication->brand_name }})</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $item->dose }}</td>
+                                            <td>{{ $item->frequency }}</td>
+                                            <td>{{ $item->route }}</td>
+                                            <td>{{ $item->duration }}</td>
+                                            <td>{{ $item->quantity }}</td>
+                                            <td>{{ $item->refills }}</td>
+                                            <td class="small">{{ $item->instructions }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="text-secondary small">No medications added yet.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+
+                            @if ($prescription->status === 'active')
+                                <form method="POST" action="{{ route('encounters.prescriptions.items.store', [$encounter, $prescription]) }}">
+                                    @csrf
+                                    <div class="row g-2">
+                                        <div class="col-md-3">
+                                            <select name="medication_id" class="form-select form-select-sm" required>
+                                                <option value="">Medication...</option>
+                                                @foreach ($medications as $medication)
+                                                    <option value="{{ $medication->id }}">
+                                                        {{ $medication->generic_name }}
+                                                        @if ($medication->brand_name) ({{ $medication->brand_name }}) @endif
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="text" name="dose" class="form-control form-control-sm" placeholder="Dose" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" name="frequency" class="form-control form-control-sm" placeholder="Frequency" required>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="text" name="route" class="form-control form-control-sm" placeholder="Route">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="text" name="duration" class="form-control form-control-sm" placeholder="Duration">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="number" name="quantity" class="form-control form-control-sm" placeholder="Qty" min="1" required>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="number" name="refills" class="form-control form-control-sm" placeholder="Refills" min="0" value="0">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-sm btn-outline-primary w-100">Add</button>
+                                        </div>
+                                    </div>
+                                    <input type="text" name="instructions" class="form-control form-control-sm mt-2" placeholder="Instructions (optional)">
+                                </form>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="text-secondary mb-0">No prescriptions issued for this encounter.</p>
+                    @endforelse
+                </div>
+
+                <form method="POST" action="{{ route('encounters.prescriptions.store', $encounter) }}">
+                    @csrf
+                    <div class="row g-2">
+                        <div class="col-md-9">
+                            <input type="text" name="notes" class="form-control form-control-sm" placeholder="Notes (optional)">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-sm btn-outline-primary w-100">New Prescription</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </x-app-layout>

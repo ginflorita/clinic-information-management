@@ -77,6 +77,7 @@
                         <li><a class="dropdown-item" href="{{ route('admin.procedure-categories.index') }}">{{ __('Procedure Categories') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.procedures.index') }}">{{ __('Procedures') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.tooth-conditions.index') }}">{{ __('Tooth Conditions') }}</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.medications.index') }}">{{ __('Medications') }}</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{{ route('admin.providers.index') }}">{{ __('Providers') }}</a></li>
                         <li><a class="dropdown-item" href="{{ route('admin.chairs.index') }}">{{ __('Chairs') }}</a></li>

@@ -140,6 +140,11 @@ class Patient extends Model
         return $this->hasMany(PerioExamination::class);
     }
 
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(Prescription::class);
+    }
+
     public function diagnoses(): HasMany
     {
         return $this->hasMany(EncounterDiagnosis::class);

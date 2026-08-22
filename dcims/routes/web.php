@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ChairController;
 use App\Http\Controllers\Admin\DiagnosisController;
 use App\Http\Controllers\Admin\InventoryCategoryController;
 use App\Http\Controllers\Admin\InventoryUnitController;
+use App\Http\Controllers\Admin\MedicationController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\ProcedureCategoryController;
 use App\Http\Controllers\Admin\ProcedureController;
@@ -39,6 +40,8 @@ use App\Http\Controllers\PatientTimelineController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PerioController;
 use App\Http\Controllers\PerioToothRecordController;
+use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\PrescriptionItemController;
 use App\Http\Controllers\ProcedureRecordController;
 use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProfileController;
@@ -81,6 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('patients/{patient}/allergies/{allergy}', [PatientAllergyController::class, 'destroy'])->name('patients.allergies.destroy');
     Route::get('patients/{patient}/odontogram', [OdontogramController::class, 'show'])->name('patients.odontogram.show');
     Route::get('patients/{patient}/periodontal', [PerioController::class, 'show'])->name('patients.periodontal.show');
+    Route::get('patients/{patient}/prescriptions', [PrescriptionController::class, 'patientHistory'])->name('patients.prescriptions.show');
     Route::post('patients/{patient}/payments', [PaymentController::class, 'storeSplit'])->name('patients.payments.store');
     Route::get('patients/{patient}/ledger', [PatientLedgerController::class, 'show'])->name('patients.ledger.show');
     Route::get('patients/{patient}/timeline', [PatientTimelineController::class, 'show'])->name('patients.timeline.show');
@@ -104,6 +108,9 @@ Route::middleware('auth')->group(function () {
     Route::post('encounters/{encounter}/procedure-records', [ProcedureRecordController::class, 'store'])->name('encounters.procedure-records.store');
     Route::post('encounters/{encounter}/procedure-records/{procedureRecord}/void', [ProcedureRecordController::class, 'void'])->name('encounters.procedure-records.void');
     Route::post('encounters/{encounter}/invoice', [InvoiceController::class, 'generateFromEncounter'])->name('encounters.invoice.generate');
+    Route::post('encounters/{encounter}/prescriptions', [PrescriptionController::class, 'store'])->name('encounters.prescriptions.store');
+    Route::post('encounters/{encounter}/prescriptions/{prescription}/cancel', [PrescriptionController::class, 'cancel'])->name('encounters.prescriptions.cancel');
+    Route::post('encounters/{encounter}/prescriptions/{prescription}/items', [PrescriptionItemController::class, 'store'])->name('encounters.prescriptions.items.store');
 
     Route::resource('treatment-plans', TreatmentPlanController::class)->only('index', 'create', 'store', 'show');
     Route::post('treatment-plans/{treatmentPlan}/transition', [TreatmentPlanController::class, 'transition'])->name('treatment-plans.transition');
@@ -140,6 +147,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('procedures', ProcedureController::class)->except('show');
         Route::resource('tooth-conditions', ToothConditionController::class)->except('show');
         Route::resource('diagnoses', DiagnosisController::class)->except('show');
+        Route::resource('medications', MedicationController::class)->except('show');
         Route::resource('providers', ProviderController::class)->except('show');
         Route::resource('chairs', ChairController::class)->except('show');
         Route::resource('appointment-types', AppointmentTypeController::class)->except('show');
