@@ -135,6 +135,11 @@ class Patient extends Model
         return $this->hasMany(Odontogram::class);
     }
 
+    public function perioExaminations(): HasMany
+    {
+        return $this->hasMany(PerioExamination::class);
+    }
+
     public function diagnoses(): HasMany
     {
         return $this->hasMany(EncounterDiagnosis::class);

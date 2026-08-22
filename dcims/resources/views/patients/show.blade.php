@@ -110,6 +110,15 @@
                 <a href="{{ route('patients.odontogram.show', $patient) }}" class="btn btn-sm btn-outline-secondary">View Chart</a>
             </div>
 
+            {{-- Periodontal Chart --}}
+            <div class="bg-white shadow-sm rounded p-4 d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="fs-5 fw-medium mb-1">Periodontal Chart</h3>
+                    <p class="small text-secondary mb-0">Probing depths and gum health, recorded per visit.</p>
+                </div>
+                <a href="{{ route('patients.periodontal.show', $patient) }}" class="btn btn-sm btn-outline-secondary">View Chart</a>
+            </div>
+
             {{-- Diagnoses --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Diagnoses</h3>

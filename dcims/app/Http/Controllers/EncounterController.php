@@ -8,6 +8,7 @@ use App\Models\Encounter;
 use App\Models\EncounterDiagnosis;
 use App\Models\OdontogramEntrySurface;
 use App\Models\Patient;
+use App\Models\PerioSiteMeasurement;
 use App\Models\Procedure;
 use App\Models\Provider;
 use App\Models\Tooth;
@@ -75,6 +76,8 @@ class EncounterController extends Controller
             $query->with(['creator', 'signer'])->orderByDesc('created_at');
         }, 'odontogram.entries' => function ($query) {
             $query->with(['tooth', 'condition', 'surfaces'])->orderByDesc('created_at');
+        }, 'perioExamination.toothRecords' => function ($query) {
+            $query->with(['tooth', 'measurements'])->orderByDesc('created_at');
         }, 'diagnoses' => function ($query) {
             $query->with(['diagnosis', 'tooth'])->orderByDesc('diagnosed_at');
         }, 'procedureRecords' => function ($query) {
@@ -95,6 +98,7 @@ class EncounterController extends Controller
             'teeth' => Tooth::where('is_active', true)->where('dentition_type', 'permanent')->orderBy('arch')->orderBy('position')->get(),
             'toothConditions' => ToothCondition::where('is_active', true)->orderBy('name')->get(),
             'surfaces' => OdontogramEntrySurface::SURFACES,
+            'perioSites' => PerioSiteMeasurement::SITES,
             'diagnosisOptions' => Diagnosis::where('is_active', true)->orderBy('name')->get(),
             'diagnosisStatuses' => EncounterDiagnosis::STATUSES,
             'procedures' => Procedure::where('is_active', true)->orderBy('name')->get(),

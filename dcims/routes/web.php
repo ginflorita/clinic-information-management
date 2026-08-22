@@ -37,6 +37,8 @@ use App\Http\Controllers\PatientLedgerController;
 use App\Http\Controllers\PatientRelationshipController;
 use App\Http\Controllers\PatientTimelineController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PerioController;
+use App\Http\Controllers\PerioToothRecordController;
 use App\Http\Controllers\ProcedureRecordController;
 use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProfileController;
@@ -78,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::post('patients/{patient}/allergies', [PatientAllergyController::class, 'store'])->name('patients.allergies.store');
     Route::delete('patients/{patient}/allergies/{allergy}', [PatientAllergyController::class, 'destroy'])->name('patients.allergies.destroy');
     Route::get('patients/{patient}/odontogram', [OdontogramController::class, 'show'])->name('patients.odontogram.show');
+    Route::get('patients/{patient}/periodontal', [PerioController::class, 'show'])->name('patients.periodontal.show');
     Route::post('patients/{patient}/payments', [PaymentController::class, 'storeSplit'])->name('patients.payments.store');
     Route::get('patients/{patient}/ledger', [PatientLedgerController::class, 'show'])->name('patients.ledger.show');
     Route::get('patients/{patient}/timeline', [PatientTimelineController::class, 'show'])->name('patients.timeline.show');
@@ -95,6 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::post('encounters/{encounter}/notes/{note}/sign', [ClinicalNoteController::class, 'sign'])->name('encounters.notes.sign');
     Route::post('encounters/{encounter}/notes/{note}/amend', [ClinicalNoteController::class, 'amend'])->name('encounters.notes.amend');
     Route::post('encounters/{encounter}/odontogram-entries', [OdontogramEntryController::class, 'store'])->name('encounters.odontogram-entries.store');
+    Route::post('encounters/{encounter}/perio-tooth-records', [PerioToothRecordController::class, 'store'])->name('encounters.perio-tooth-records.store');
     Route::post('encounters/{encounter}/diagnoses', [EncounterDiagnosisController::class, 'store'])->name('encounters.diagnoses.store');
     Route::patch('encounters/{encounter}/diagnoses/{encounterDiagnosis}/status', [EncounterDiagnosisController::class, 'updateStatus'])->name('encounters.diagnoses.status');
     Route::post('encounters/{encounter}/procedure-records', [ProcedureRecordController::class, 'store'])->name('encounters.procedure-records.store');
