@@ -165,3 +165,45 @@ $dropdown-box-shadow: $box-shadow-lg;
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: $primary;
 }
+
+// 5. Login / auth split screen --------------------------------------------
+// Branded panel on the login page — teal gradient plus a faint dot-grid
+// texture, evoking a clinic waiting-room wall rather than a bare form.
+.auth-brand-panel {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, $primary 0%, shade-color($primary, 35%) 100%);
+    flex: 0 0 auto;
+}
+
+.auth-brand-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+}
+
+.auth-brand-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-feature-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@include media-breakpoint-up(lg) {
+    .auth-brand-panel {
+        width: 44%;
+        min-height: 100vh;
+    }
+}
