@@ -19,6 +19,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Admin</th>
                             <th>Role</th>
                             <th>Status</th>
                             <th>Joined</th>
@@ -35,6 +36,7 @@
                                         {{ $user->is_admin ? 'Administrator' : 'User' }}
                                     </span>
                                 </td>
+                                <td>{{ $user->role->name ?? '—' }}</td>
                                 <td>
                                     <span class="badge {{ $user->is_active ? 'text-bg-success' : 'text-bg-secondary' }}">
                                         {{ $user->is_active ? 'Active' : 'Inactive' }}
