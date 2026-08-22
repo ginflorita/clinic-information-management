@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConsentType;
 use App\Models\Patient;
 use App\Models\PaymentMethod;
 use App\Models\RecallType;
@@ -59,6 +60,8 @@ class PatientController extends Controller
             $query->orderByDesc('invoice_date');
         }, 'recalls' => function ($query) {
             $query->with('recallType')->orderByDesc('due_date');
+        }, 'consents' => function ($query) {
+            $query->with(['consentType', 'obtainer'])->orderByDesc('granted_at');
         }]);
 
         return view('patients.show', [
@@ -66,6 +69,7 @@ class PatientController extends Controller
             'outstandingInvoices' => $patient->invoices->filter(fn ($invoice) => $invoice->balance > 0),
             'paymentMethods' => PaymentMethod::where('is_active', true)->orderBy('name')->get(),
             'recallTypes' => RecallType::where('is_active', true)->orderBy('name')->get(),
+            'consentTypes' => ConsentType::where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 

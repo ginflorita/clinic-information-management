@@ -150,6 +150,11 @@ class Patient extends Model
         return $this->hasMany(Recall::class);
     }
 
+    public function consents(): HasMany
+    {
+        return $this->hasMany(Consent::class);
+    }
+
     public function diagnoses(): HasMany
     {
         return $this->hasMany(EncounterDiagnosis::class);

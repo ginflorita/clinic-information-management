@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AppointmentTypeController;
 use App\Http\Controllers\Admin\ChairController;
+use App\Http\Controllers\Admin\ConsentTypeController;
 use App\Http\Controllers\Admin\DiagnosisController;
 use App\Http\Controllers\Admin\InventoryCategoryController;
 use App\Http\Controllers\Admin\InventoryUnitController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClinicalNoteController;
+use App\Http\Controllers\ConsentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
@@ -91,6 +93,8 @@ Route::middleware('auth')->group(function () {
     Route::get('patients/{patient}/ledger', [PatientLedgerController::class, 'show'])->name('patients.ledger.show');
     Route::get('patients/{patient}/timeline', [PatientTimelineController::class, 'show'])->name('patients.timeline.show');
     Route::post('patients/{patient}/recalls', [RecallController::class, 'store'])->name('patients.recalls.store');
+    Route::post('patients/{patient}/consents', [ConsentController::class, 'store'])->name('patients.consents.store');
+    Route::post('patients/{patient}/consents/{consent}/revoke', [ConsentController::class, 'revoke'])->name('patients.consents.revoke');
 
     Route::resource('appointments', AppointmentController::class)->except('destroy', 'show');
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
@@ -154,6 +158,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('procedures', ProcedureController::class)->except('show');
         Route::resource('tooth-conditions', ToothConditionController::class)->except('show');
         Route::resource('diagnoses', DiagnosisController::class)->except('show');
+        Route::resource('consent-types', ConsentTypeController::class)->except('show');
         Route::resource('medications', MedicationController::class)->except('show');
         Route::resource('recall-types', RecallTypeController::class)->except('show');
         Route::resource('providers', ProviderController::class)->except('show');

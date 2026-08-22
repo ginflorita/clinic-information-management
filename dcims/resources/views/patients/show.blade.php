@@ -415,6 +415,55 @@
                 </form>
             </div>
 
+            {{-- Consents --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Consents</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->consents as $consent)
+                            <tr>
+                                <td>{{ $consent->consentType->name }}</td>
+                                <td>
+                                    <span class="badge {{ $consent->status === 'granted' ? 'text-bg-success' : 'text-bg-secondary' }} text-capitalize">
+                                        {{ $consent->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $consent->granted_at->format('Y-m-d') }}</td>
+                                <td class="text-secondary small">{{ $consent->obtainer->name ?? '—' }}</td>
+                                <td>{{ $consent->notes }}</td>
+                                <td class="text-end">
+                                    @if ($consent->status === 'granted')
+                                        <form method="POST" action="{{ route('patients.consents.revoke', [$patient, $consent]) }}" class="d-inline" onsubmit="return confirm('Revoke this consent?');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Revoke</button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No consents on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.consents.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <select name="consent_type_id" class="form-select form-select-sm" required>
+                            <option value="">Consent type...</option>
+                            @foreach ($consentTypes as $consentType)
+                                <option value="{{ $consentType->id }}">{{ $consentType->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="notes" class="form-control form-control-sm" placeholder="Notes (optional)">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Record Consent</button>
+                    </div>
+                </form>
+            </div>
+
             {{-- Contacts --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Contacts</h3>
