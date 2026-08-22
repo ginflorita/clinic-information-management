@@ -8,6 +8,8 @@ use App\Models\Encounter;
 use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\Payment;
+use App\Models\Product;
+use App\Models\ProductBatch;
 use App\Models\QueueEntry;
 use App\Models\TreatmentPlan;
 use App\Models\User;
@@ -139,13 +141,28 @@ class DashboardTest extends TestCase
         $response->assertViewHas('metrics', fn ($metrics) => $metrics['follow_up_patients'] === 1);
     }
 
-    public function test_low_stock_and_expiring_inventory_are_stubbed_to_zero(): void
+    public function test_low_stock_items_counts_products_below_their_reorder_level(): void
     {
+        $lowStock = Product::factory()->create(['reorder_level' => 10]);
+        ProductBatch::factory()->create(['product_id' => $lowStock->id, 'quantity' => 4]);
+
+        $wellStocked = Product::factory()->create(['reorder_level' => 10]);
+        ProductBatch::factory()->create(['product_id' => $wellStocked->id, 'quantity' => 50]);
+
         $response = $this->actingAs(User::factory()->create())->get(route('dashboard'));
 
-        $response->assertViewHas('metrics', function ($metrics) {
-            return $metrics['low_stock_items'] === 0 && $metrics['expiring_inventory'] === 0;
-        });
+        $response->assertViewHas('metrics', fn ($metrics) => $metrics['low_stock_items'] === 1);
+    }
+
+    public function test_expiring_inventory_counts_batches_expiring_soon(): void
+    {
+        ProductBatch::factory()->create(['quantity' => 5, 'expiry_date' => today()->addDays(10)]);
+        ProductBatch::factory()->create(['quantity' => 5, 'expiry_date' => today()->addDays(90)]);
+        ProductBatch::factory()->create(['quantity' => 0, 'expiry_date' => today()->addDays(5)]);
+
+        $response = $this->actingAs(User::factory()->create())->get(route('dashboard'));
+
+        $response->assertViewHas('metrics', fn ($metrics) => $metrics['expiring_inventory'] === 1);
     }
 
     public function test_recent_activity_includes_a_newly_registered_patient(): void

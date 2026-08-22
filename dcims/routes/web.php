@@ -8,7 +8,9 @@ use App\Http\Controllers\Admin\InventoryUnitController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\ProcedureCategoryController;
 use App\Http\Controllers\Admin\ProcedureController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProviderController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ToothConditionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController;
@@ -18,6 +20,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DentalHistoryController;
 use App\Http\Controllers\EncounterController;
 use App\Http\Controllers\EncounterDiagnosisController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceAdjustmentController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MedicalHistoryController;
@@ -34,8 +37,10 @@ use App\Http\Controllers\PatientRelationshipController;
 use App\Http\Controllers\PatientTimelineController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProcedureRecordController;
+use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QueueEntryController;
+use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentPlanItemController;
 use Illuminate\Support\Facades\Route;
@@ -112,6 +117,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
 
+    Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::get('inventory/{product}', [InventoryController::class, 'show'])->name('inventory.show');
+    Route::post('inventory/{product}/batches', [ProductBatchController::class, 'store'])->name('inventory.batches.store');
+    Route::post('inventory/{product}/stock-out', [StockMovementController::class, 'stockOut'])->name('inventory.stock-out');
+    Route::post('inventory/{product}/adjust', [StockMovementController::class, 'adjust'])->name('inventory.adjust');
+
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('procedure-categories', ProcedureCategoryController::class)->except('show');
         Route::resource('procedures', ProcedureController::class)->except('show');
@@ -123,6 +134,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('payment-methods', PaymentMethodController::class)->except('show');
         Route::resource('inventory-categories', InventoryCategoryController::class)->except('show');
         Route::resource('inventory-units', InventoryUnitController::class)->except('show');
+        Route::resource('suppliers', SupplierController::class)->except('show');
+        Route::resource('products', ProductController::class)->except('show');
 
         Route::middleware('admin')->group(function () {
             Route::resource('users', UserController::class)->except('show', 'destroy');
