@@ -21,6 +21,7 @@ A Laravel-based clinic information system for dental practices: patient records,
 - **Diagnosis** — per-encounter diagnoses
 - **Treatment Planning** — proposed treatment plans with status workflow
 - **Procedures & Procedure Records** — procedures performed per encounter
+- **Prescriptions** — medications prescribed per encounter, with dose/frequency/route/duration/refills, backed by an admin-managed medication list
 
 **Financial**
 - **Billing** — invoices generated from procedures/treatment plans
@@ -35,6 +36,32 @@ A Laravel-based clinic information system for dental practices: patient records,
 **Reporting & Compliance**
 - **Dashboard & Reports** — clinic-wide overview and basic reports
 - **Audit Trail** — change history (create/update/delete) across auditable records, with actor, IP, and before/after values
+
+## Roadmap
+
+Development follows the phased plan in [`Dental_Clinic_Information_Management_System.md`](Dental_Clinic_Information_Management_System.md).
+
+**Phase 1 — MVP** ✅ complete
+Authentication, dashboard, patient registration/profile, medical & dental history, allergies, appointments, queue, encounters, clinical notes, dental chart, procedures, treatment plans, billing, payments, patient timeline, basic reports, audit trail.
+
+**Phase 2 — in progress**
+| Module | Status |
+|---|---|
+| Periodontal Charting | ✅ done |
+| Inventory Management | ✅ done |
+| Suppliers | ✅ done |
+| Purchase Orders & Goods Receipts | ✅ done |
+| Prescriptions | ✅ done |
+| Imaging | ⬜ not started |
+| Patient Documents | ⬜ not started |
+| Consent Management | ⬜ not started |
+| Recall | ⬜ not started |
+| Referrals | ⬜ not started |
+| Laboratory (dental lab orders) | ⬜ not started |
+| Advanced Reports | ⬜ not started |
+
+**Phase 3 — not started**
+Granular role-based access control, multi-clinic support, SMS/email notifications, online appointment booking, patient portal, digital signatures, advanced audit, backup management, external integrations/API.
 
 ## Development
 
