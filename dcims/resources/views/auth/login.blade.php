@@ -1,4 +1,7 @@
-<x-guest-layout>
+<x-auth-split-layout>
+    <h2 class="h4 fw-semibold mb-1">Welcome back</h2>
+    <p class="text-secondary small mb-4">Sign in to your DCIMS account to continue.</p>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -42,4 +45,4 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</x-auth-split-layout>
