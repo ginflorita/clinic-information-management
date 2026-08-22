@@ -9,21 +9,6 @@
     <nav class="sidebar-nav flex-grow-1">
         @include('layouts.navigation-links', ['prefix' => 'desktop'])
     </nav>
-
-    <div class="sidebar-user dropdown">
-        <a class="sidebar-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ Auth::user()->name }}
-        </a>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a></li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="dropdown-item">{{ __('Log Out') }}</button>
-                </form>
-            </li>
-        </ul>
-    </div>
 </aside>
 
 {{-- Mobile top bar --}}
@@ -41,20 +26,7 @@
             </span>
         </a>
 
-        <div class="dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ Auth::user()->name }}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">{{ __('Profile') }}</a></li>
-                <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="dropdown-item">{{ __('Log Out') }}</button>
-                    </form>
-                </li>
-            </ul>
-        </div>
+        <x-user-menu />
     </div>
 </nav>
 

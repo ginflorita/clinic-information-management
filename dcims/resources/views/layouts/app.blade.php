@@ -18,8 +18,11 @@
                 <!-- Page Heading -->
                 @isset($header)
                     <header class="bg-white border-bottom py-3">
-                        <div class="container-fluid px-4">
-                            {{ $header }}
+                        <div class="container-fluid px-4 d-flex justify-content-between align-items-center gap-3">
+                            <div class="min-w-0">
+                                {{ $header }}
+                            </div>
+                            <x-user-menu class="d-none d-lg-block flex-shrink-0" />
                         </div>
                     </header>
                 @endisset
