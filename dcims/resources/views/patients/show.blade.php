@@ -372,6 +372,49 @@
                 </form>
             </div>
 
+            {{-- Recalls --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <h3 class="fs-5 fw-medium mb-3">Recalls</h3>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->recalls as $recall)
+                            <tr>
+                                <td>{{ $recall->recallType->name }}</td>
+                                <td>{{ $recall->due_date->format('Y-m-d') }}</td>
+                                <td>
+                                    <span class="badge {{ $recall->status === 'completed' ? 'text-bg-success' : ($recall->isOverdue() ? 'text-bg-danger' : ($recall->status === 'cancelled' ? 'text-bg-secondary' : 'text-bg-warning')) }} text-capitalize">
+                                        {{ $recall->isOverdue() ? 'Overdue' : $recall->status }}
+                                    </span>
+                                </td>
+                                <td>{{ $recall->notes }}</td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No recalls scheduled.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.recalls.store', $patient) }}" class="row g-2 align-items-end">
+                    @csrf
+                    <div class="col-auto">
+                        <select name="recall_type_id" class="form-select form-select-sm" required>
+                            <option value="">Recall type...</option>
+                            @foreach ($recallTypes as $recallType)
+                                <option value="{{ $recallType->id }}">{{ $recallType->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" name="due_date" class="form-control form-control-sm" required>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="notes" class="form-control form-control-sm" placeholder="Notes (optional)">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Schedule Recall</button>
+                    </div>
+                </form>
+            </div>
+
             {{-- Contacts --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Contacts</h3>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Patient;
 use App\Models\PaymentMethod;
+use App\Models\RecallType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,12 +57,15 @@ class PatientController extends Controller
             $query->with(['procedure', 'tooth', 'encounter'])->orderByDesc('performed_at');
         }, 'invoices' => function ($query) {
             $query->orderByDesc('invoice_date');
+        }, 'recalls' => function ($query) {
+            $query->with('recallType')->orderByDesc('due_date');
         }]);
 
         return view('patients.show', [
             'patient' => $patient,
             'outstandingInvoices' => $patient->invoices->filter(fn ($invoice) => $invoice->balance > 0),
             'paymentMethods' => PaymentMethod::where('is_active', true)->orderBy('name')->get(),
+            'recallTypes' => RecallType::where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
