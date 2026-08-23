@@ -25,6 +25,7 @@ class Role extends Model
         'referrals' => 'Referrals',
         'encounters' => 'Encounters',
         'treatment_plans' => 'Treatment Plans',
+        'laboratory' => 'Laboratory',
         'invoices' => 'Billing & Payments',
         'inventory' => 'Inventory',
         'purchase_orders' => 'Purchase Orders',

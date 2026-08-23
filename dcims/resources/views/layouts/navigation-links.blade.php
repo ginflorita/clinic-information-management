@@ -9,7 +9,7 @@
     {{ __('Dashboard') }}
 </a>
 
-@if ($can('patients') || $can('appointments') || $can('queue') || $can('recalls') || $can('referrals') || $can('encounters') || $can('treatment_plans'))
+@if ($can('patients') || $can('appointments') || $can('queue') || $can('recalls') || $can('referrals') || $can('encounters') || $can('treatment_plans') || $can('laboratory'))
     <div class="sidebar-section">
         <div class="sidebar-section-title">{{ __('Patient Care') }}</div>
         @if ($can('patients'))
@@ -32,6 +32,9 @@
         @endif
         @if ($can('treatment_plans'))
             <a class="sidebar-link {{ request()->routeIs('treatment-plans.*') ? 'active' : '' }}" href="{{ route('treatment-plans.index') }}">{{ __('Treatment Plans') }}</a>
+        @endif
+        @if ($can('laboratory'))
+            <a class="sidebar-link {{ request()->routeIs('lab-orders.*') ? 'active' : '' }}" href="{{ route('lab-orders.index') }}">{{ __('Lab Orders') }}</a>
         @endif
     </div>
 @endif
@@ -87,6 +90,7 @@
                     <a class="sidebar-link" href="{{ route('admin.inventory-units.index') }}">{{ __('Inventory Units') }}</a>
                     <a class="sidebar-link" href="{{ route('admin.products.index') }}">{{ __('Products') }}</a>
                     <a class="sidebar-link" href="{{ route('admin.suppliers.index') }}">{{ __('Suppliers') }}</a>
+                    <a class="sidebar-link" href="{{ route('admin.labs.index') }}">{{ __('Labs') }}</a>
                 </div>
             </div>
         @endif

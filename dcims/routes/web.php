@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ConsentTypeController;
 use App\Http\Controllers\Admin\DiagnosisController;
 use App\Http\Controllers\Admin\InventoryCategoryController;
 use App\Http\Controllers\Admin\InventoryUnitController;
+use App\Http\Controllers\Admin\LabController;
 use App\Http\Controllers\Admin\MedicationController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\ProcedureCategoryController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\GoodsReceiptController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\InvoiceAdjustmentController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LabOrderController;
 use App\Http\Controllers\MedicalHistoryController;
 use App\Http\Controllers\OdontogramController;
 use App\Http\Controllers\OdontogramEntryController;
@@ -135,6 +137,11 @@ Route::middleware('auth')->group(function () {
         Route::patch('treatment-plans/{treatmentPlan}/items/{item}/status', [TreatmentPlanItemController::class, 'updateStatus'])->name('treatment-plans.items.status');
     });
 
+    Route::middleware('module:laboratory')->group(function () {
+        Route::resource('lab-orders', LabOrderController::class)->only('index', 'create', 'store');
+        Route::post('lab-orders/{labOrder}/transition', [LabOrderController::class, 'transition'])->name('lab-orders.transition');
+    });
+
     Route::middleware('module:invoices')->group(function () {
         Route::resource('invoices', InvoiceController::class)->only('index', 'show');
         Route::post('invoices/{invoice}/payments', [PaymentController::class, 'store'])->name('invoices.payments.store');
@@ -197,6 +204,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('inventory-categories', InventoryCategoryController::class)->except('show');
             Route::resource('inventory-units', InventoryUnitController::class)->except('show');
             Route::resource('suppliers', SupplierController::class)->except('show');
+            Route::resource('labs', LabController::class)->except('show');
             Route::resource('products', ProductController::class)->except('show');
         });
 
