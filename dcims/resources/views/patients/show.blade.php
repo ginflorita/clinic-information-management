@@ -464,6 +464,75 @@
                 </form>
             </div>
 
+            {{-- Referrals --}}
+            <div class="bg-white shadow-sm rounded p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fs-5 fw-medium mb-0">Referrals</h3>
+                    @if (Auth::user()->canAccessModule('referrals'))
+                        <a href="{{ route('referrals.index') }}" class="small">View all referrals</a>
+                    @endif
+                </div>
+                <table class="table table-sm mb-3">
+                    <tbody>
+                        @forelse ($patient->referrals as $referral)
+                            <tr>
+                                <td>{{ $referral->referral_number }}</td>
+                                <td>
+                                    {{ $referral->receiving_name }}
+                                    @if ($referral->receiving_specialty)
+                                        <span class="text-secondary">({{ $referral->receiving_specialty }})</span>
+                                    @endif
+                                </td>
+                                <td>{{ $referral->referral_date->format('Y-m-d') }}</td>
+                                <td>
+                                    <span class="badge text-bg-{{ match($referral->status) { 'draft' => 'secondary', 'sent' => 'primary', 'received' => 'info', 'completed' => 'success', 'cancelled' => 'danger', default => 'secondary' } }} text-capitalize">
+                                        {{ $referral->status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td class="text-secondary">No referrals on file.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                <form method="POST" action="{{ route('patients.referrals.store', $patient) }}">
+                    @csrf
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <select name="referring_provider_id" class="form-select form-select-sm" required>
+                                <option value="">Referring provider...</option>
+                                @foreach ($providers as $provider)
+                                    <option value="{{ $provider->id }}">{{ $provider->full_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="receiving_name" class="form-control form-control-sm" placeholder="Receiving doctor/clinic" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="receiving_specialty" class="form-control form-control-sm" placeholder="Specialty (optional)">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="referral_date" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-sm btn-outline-primary w-100">Create Referral</button>
+                        </div>
+                    </div>
+                    <div class="row g-2 mt-1">
+                        <div class="col-md-4">
+                            <input type="text" name="receiving_contact" class="form-control form-control-sm" placeholder="Receiving contact (optional)">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason for referral" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" name="clinical_summary" class="form-control form-control-sm" placeholder="Clinical summary (optional)">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             {{-- Contacts --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Contacts</h3>
