@@ -9,7 +9,7 @@
     {{ __('Dashboard') }}
 </a>
 
-@if ($can('patients') || $can('appointments') || $can('queue') || $can('recalls') || $can('encounters') || $can('treatment_plans'))
+@if ($can('patients') || $can('appointments') || $can('queue') || $can('recalls') || $can('referrals') || $can('encounters') || $can('treatment_plans'))
     <div class="sidebar-section">
         <div class="sidebar-section-title">{{ __('Patient Care') }}</div>
         @if ($can('patients'))
@@ -23,6 +23,9 @@
         @endif
         @if ($can('recalls'))
             <a class="sidebar-link {{ request()->routeIs('recalls.*') ? 'active' : '' }}" href="{{ route('recalls.index') }}">{{ __('Recalls') }}</a>
+        @endif
+        @if ($can('referrals'))
+            <a class="sidebar-link {{ request()->routeIs('referrals.*') ? 'active' : '' }}" href="{{ route('referrals.index') }}">{{ __('Referrals') }}</a>
         @endif
         @if ($can('encounters'))
             <a class="sidebar-link {{ request()->routeIs('encounters.*') ? 'active' : '' }}" href="{{ route('encounters.index') }}">{{ __('Encounters') }}</a>

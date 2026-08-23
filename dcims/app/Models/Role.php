@@ -22,6 +22,7 @@ class Role extends Model
         'appointments' => 'Appointments',
         'queue' => 'Queue',
         'recalls' => 'Recalls',
+        'referrals' => 'Referrals',
         'encounters' => 'Encounters',
         'treatment_plans' => 'Treatment Plans',
         'invoices' => 'Billing & Payments',

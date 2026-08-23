@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ConsentType;
 use App\Models\Patient;
 use App\Models\PaymentMethod;
+use App\Models\Provider;
 use App\Models\RecallType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -62,6 +63,8 @@ class PatientController extends Controller
             $query->with('recallType')->orderByDesc('due_date');
         }, 'consents' => function ($query) {
             $query->with(['consentType', 'obtainer'])->orderByDesc('granted_at');
+        }, 'referrals' => function ($query) {
+            $query->with('referringProvider')->orderByDesc('referral_date');
         }]);
 
         return view('patients.show', [
@@ -70,6 +73,7 @@ class PatientController extends Controller
             'paymentMethods' => PaymentMethod::where('is_active', true)->orderBy('name')->get(),
             'recallTypes' => RecallType::where('is_active', true)->orderBy('name')->get(),
             'consentTypes' => ConsentType::where('is_active', true)->orderBy('name')->get(),
+            'providers' => Provider::where('is_active', true)->orderBy('last_name')->get(),
         ]);
     }
 

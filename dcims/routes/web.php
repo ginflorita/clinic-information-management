@@ -53,6 +53,7 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PurchaseOrderItemController;
 use App\Http\Controllers\QueueEntryController;
 use App\Http\Controllers\RecallController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentPlanItemController;
@@ -97,6 +98,7 @@ Route::middleware('auth')->group(function () {
         Route::post('patients/{patient}/recalls', [RecallController::class, 'store'])->name('patients.recalls.store');
         Route::post('patients/{patient}/consents', [ConsentController::class, 'store'])->name('patients.consents.store');
         Route::post('patients/{patient}/consents/{consent}/revoke', [ConsentController::class, 'revoke'])->name('patients.consents.revoke');
+        Route::post('patients/{patient}/referrals', [ReferralController::class, 'store'])->name('patients.referrals.store');
     });
 
     Route::middleware('module:appointments')->group(function () {
@@ -157,6 +159,11 @@ Route::middleware('auth')->group(function () {
         Route::get('recalls', [RecallController::class, 'index'])->name('recalls.index');
         Route::post('recalls/{recall}/complete', [RecallController::class, 'complete'])->name('recalls.complete');
         Route::post('recalls/{recall}/cancel', [RecallController::class, 'cancel'])->name('recalls.cancel');
+    });
+
+    Route::middleware('module:referrals')->group(function () {
+        Route::get('referrals', [ReferralController::class, 'index'])->name('referrals.index');
+        Route::post('referrals/{referral}/transition', [ReferralController::class, 'transition'])->name('referrals.transition');
     });
 
     Route::middleware('module:inventory')->group(function () {
