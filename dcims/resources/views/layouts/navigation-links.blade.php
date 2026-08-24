@@ -58,6 +58,13 @@
     </div>
 @endif
 
+@if ($can('reports'))
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">{{ __('Reports') }}</div>
+        <a class="sidebar-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">{{ __('Reports') }}</a>
+    </div>
+@endif
+
 @if ($can('audit_logs') || $user->is_admin || $can('master_data'))
     <div class="sidebar-section">
         <div class="sidebar-section-title">{{ __('Administration') }}</div>

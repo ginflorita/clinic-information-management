@@ -56,6 +56,7 @@ use App\Http\Controllers\PurchaseOrderItemController;
 use App\Http\Controllers\QueueEntryController;
 use App\Http\Controllers\RecallController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentPlanItemController;
@@ -160,6 +161,15 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('module:audit_logs')->group(function () {
         Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+    });
+
+    Route::middleware('module:reports')->prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('patients', [ReportController::class, 'patients'])->name('patients');
+        Route::get('appointments', [ReportController::class, 'appointments'])->name('appointments');
+        Route::get('clinical', [ReportController::class, 'clinical'])->name('clinical');
+        Route::get('financial', [ReportController::class, 'financial'])->name('financial');
+        Route::get('inventory', [ReportController::class, 'inventory'])->name('inventory');
     });
 
     Route::middleware('module:recalls')->group(function () {
