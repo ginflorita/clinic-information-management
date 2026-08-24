@@ -17,6 +17,7 @@
         @endif
         @if ($can('appointments'))
             <a class="sidebar-link {{ request()->routeIs('appointments.*') ? 'active' : '' }}" href="{{ route('appointments.index') }}">{{ __('Appointments') }}</a>
+            <a class="sidebar-link {{ request()->routeIs('appointment-requests.*') ? 'active' : '' }}" href="{{ route('appointment-requests.index') }}">{{ __('Appointment Requests') }}</a>
         @endif
         @if ($can('queue'))
             <a class="sidebar-link {{ request()->routeIs('queue.*') ? 'active' : '' }}" href="{{ route('queue.index') }}">{{ __('Queue') }}</a>

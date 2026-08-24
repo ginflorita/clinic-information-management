@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ToothConditionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AppointmentRequestController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClinicalNoteController;
 use App\Http\Controllers\ConsentController;
@@ -68,6 +69,9 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('book-appointment', [AppointmentRequestController::class, 'create'])->name('book-appointment.create');
+Route::post('book-appointment', [AppointmentRequestController::class, 'store'])->middleware('throttle:5,1')->name('book-appointment.store');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -110,6 +114,9 @@ Route::middleware('auth')->group(function () {
         Route::post('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
         Route::post('appointments/{appointment}/no-show', [AppointmentController::class, 'markNoShow'])->name('appointments.no-show');
         Route::post('appointments/{appointment}/encounter', [EncounterController::class, 'startFromAppointment'])->name('appointments.encounter.start');
+
+        Route::get('appointment-requests', [AppointmentRequestController::class, 'index'])->name('appointment-requests.index');
+        Route::post('appointment-requests/{appointmentRequest}/decline', [AppointmentRequestController::class, 'decline'])->name('appointment-requests.decline');
     });
 
     Route::middleware('module:encounters')->group(function () {
