@@ -179,6 +179,36 @@
                 </table>
             </div>
 
+            {{-- Lab Orders --}}
+            @if (Auth::user()->canAccessModule('laboratory'))
+                <div class="bg-white shadow-sm rounded p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fs-5 fw-medium mb-0">Lab Orders</h3>
+                        <a href="{{ route('lab-orders.create') }}" class="small">New lab order</a>
+                    </div>
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            @forelse ($patient->labOrders as $labOrder)
+                                <tr>
+                                    <td>{{ $labOrder->case_number }}</td>
+                                    <td>{{ $labOrder->lab->name }}</td>
+                                    <td>
+                                        <span class="badge text-bg-{{ match($labOrder->status) { 'pending' => 'secondary', 'sent' => 'primary', 'in_progress' => 'info', 'ready' => 'warning', 'received' => 'success', 'cancelled' => 'danger', default => 'secondary' } }} text-capitalize">
+                                            {{ str_replace('_', ' ', $labOrder->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{{ route('lab-orders.index') }}" class="small">View all</a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr><td class="text-secondary">No lab orders on file.</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+
             {{-- Procedures Performed --}}
             <div class="bg-white shadow-sm rounded p-4">
                 <h3 class="fs-5 fw-medium mb-3">Procedures Performed</h3>

@@ -160,6 +160,11 @@ class Patient extends Model
         return $this->hasMany(Referral::class);
     }
 
+    public function labOrders(): HasMany
+    {
+        return $this->hasMany(LabOrder::class);
+    }
+
     public function diagnoses(): HasMany
     {
         return $this->hasMany(EncounterDiagnosis::class);

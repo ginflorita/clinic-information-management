@@ -65,6 +65,8 @@ class PatientController extends Controller
             $query->with(['consentType', 'obtainer'])->orderByDesc('granted_at');
         }, 'referrals' => function ($query) {
             $query->with('referringProvider')->orderByDesc('referral_date');
+        }, 'labOrders' => function ($query) {
+            $query->with('lab')->orderByDesc('created_at');
         }]);
 
         return view('patients.show', [
