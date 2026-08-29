@@ -9,6 +9,9 @@
             </h2>
             <div class="d-flex gap-2">
                 <a href="{{ route('patients.timeline.show', $patient) }}" class="btn btn-sm btn-primary">Timeline</a>
+                @if (auth()->user()->canAccessModule('audit_logs'))
+                    <a href="{{ route('audit-logs.index', ['entity_type' => 'patients', 'entity_id' => $patient->id]) }}" class="btn btn-sm btn-outline-secondary">History</a>
+                @endif
                 <a href="{{ route('patients.edit', $patient) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 @if ($patient->status === 'archived')
                     <form method="POST" action="{{ route('patients.restore', $patient) }}">

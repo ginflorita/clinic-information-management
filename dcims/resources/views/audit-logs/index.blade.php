@@ -17,11 +17,24 @@
                         </select>
                     </div>
                     <div class="col-12">
+                        <label class="form-label small text-secondary mb-1">Record #</label>
+                        <input type="text" name="entity_id" value="{{ $filters['entity_id'] }}" class="form-control" style="max-width: 6rem;">
+                    </div>
+                    <div class="col-12">
                         <label class="form-label small text-secondary mb-1">Action</label>
                         <select name="action" class="form-select">
                             <option value="">All</option>
                             @foreach ($actions as $action)
                                 <option value="{{ $action }}" @selected($filters['action'] === $action)>{{ ucfirst($action) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small text-secondary mb-1">Actor</label>
+                        <select name="actor_id" class="form-select">
+                            <option value="">All</option>
+                            @foreach ($actors as $actor)
+                                <option value="{{ $actor->id }}" @selected((string) $filters['actor_id'] === (string) $actor->id)>{{ $actor->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -36,6 +49,9 @@
                     <div class="col-12">
                         <button type="submit" class="btn btn-outline-secondary">Filter</button>
                         <a href="{{ route('audit-logs.index') }}" class="btn btn-link">Reset</a>
+                    </div>
+                    <div class="col-12 ms-lg-auto">
+                        <a href="{{ route('audit-logs.export', $filters) }}" class="btn btn-outline-primary">Export CSV</a>
                     </div>
                 </form>
 

@@ -168,6 +168,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('module:audit_logs')->group(function () {
         Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('audit-logs/export', [AuditLogController::class, 'export'])->name('audit-logs.export');
     });
 
     Route::middleware('module:reports')->prefix('reports')->name('reports.')->group(function () {
