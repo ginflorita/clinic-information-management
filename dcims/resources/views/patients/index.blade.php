@@ -18,7 +18,7 @@
                     <a href="{{ route('patients.create') }}" class="btn btn-primary">Register Patient</a>
                 </div>
 
-                <table id="data-table" class="table table-striped align-middle w-100">
+                <table class="table table-striped align-middle w-100">
                     <thead>
                         <tr>
                             <th>Patient #</th>
@@ -48,15 +48,9 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                {{ $patients->links() }}
             </div>
         </div>
     </div>
-
-    @push('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                new DataTable('#data-table', { paging: {{ $patients->count() > 10 ? 'true' : 'false' }} });
-            });
-        </script>
-    @endpush
 </x-app-layout>
