@@ -30,6 +30,7 @@ class Role extends Model
         'inventory' => 'Inventory',
         'purchase_orders' => 'Purchase Orders',
         'audit_logs' => 'Audit Log',
+        'reports' => 'Reports',
         'master_data' => 'Master Data',
     ];
 

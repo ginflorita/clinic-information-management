@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\AppointmentRequest;
 use App\Models\AppointmentType;
 use App\Models\Chair;
 use App\Models\Patient;
@@ -11,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use LogicException;
 
 class AppointmentController extends Controller
 {
@@ -23,16 +25,35 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('appointments.create', $this->formOptions());
+        $appointmentRequest = null;
+
+        if ($requestId = $request->query('appointment_request_id')) {
+            $appointmentRequest = AppointmentRequest::where('status', 'pending')->find($requestId);
+        }
+
+        return view('appointments.create', $this->formOptions() + ['appointmentRequest' => $appointmentRequest]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validateAppointment($request);
 
-        Appointment::create($data);
+        $appointmentRequest = null;
+        if ($requestId = $request->input('appointment_request_id')) {
+            $appointmentRequest = AppointmentRequest::where('status', 'pending')->find($requestId);
+        }
+
+        $appointment = Appointment::create($data);
+
+        if ($appointmentRequest) {
+            try {
+                $appointmentRequest->confirm($appointment, $request->user());
+            } catch (LogicException $e) {
+                throw ValidationException::withMessages(['appointment_request_id' => $e->getMessage()]);
+            }
+        }
 
         return redirect()->route('appointments.index')->with('status', 'Appointment scheduled.');
     }

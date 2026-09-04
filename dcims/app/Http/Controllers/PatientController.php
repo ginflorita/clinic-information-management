@@ -30,7 +30,7 @@ class PatientController extends Controller
         }
 
         return view('patients.index', [
-            'patients' => $query->orderBy('last_name')->get(),
+            'patients' => $query->orderBy('last_name')->paginate(20)->withQueryString(),
             'search' => $search ?? '',
         ]);
     }

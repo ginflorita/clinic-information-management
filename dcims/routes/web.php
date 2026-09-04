@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ToothConditionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AppointmentRequestController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ClinicalNoteController;
 use App\Http\Controllers\ConsentController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\PurchaseOrderItemController;
 use App\Http\Controllers\QueueEntryController;
 use App\Http\Controllers\RecallController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockMovementController;
 use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentPlanItemController;
@@ -66,6 +68,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('book-appointment', [AppointmentRequestController::class, 'create'])->name('book-appointment.create');
+Route::post('book-appointment', [AppointmentRequestController::class, 'store'])->middleware('throttle:5,1')->name('book-appointment.store');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -109,6 +114,9 @@ Route::middleware('auth')->group(function () {
         Route::post('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
         Route::post('appointments/{appointment}/no-show', [AppointmentController::class, 'markNoShow'])->name('appointments.no-show');
         Route::post('appointments/{appointment}/encounter', [EncounterController::class, 'startFromAppointment'])->name('appointments.encounter.start');
+
+        Route::get('appointment-requests', [AppointmentRequestController::class, 'index'])->name('appointment-requests.index');
+        Route::post('appointment-requests/{appointmentRequest}/decline', [AppointmentRequestController::class, 'decline'])->name('appointment-requests.decline');
     });
 
     Route::middleware('module:encounters')->group(function () {
@@ -160,6 +168,16 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('module:audit_logs')->group(function () {
         Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('audit-logs/export', [AuditLogController::class, 'export'])->name('audit-logs.export');
+    });
+
+    Route::middleware('module:reports')->prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('patients', [ReportController::class, 'patients'])->name('patients');
+        Route::get('appointments', [ReportController::class, 'appointments'])->name('appointments');
+        Route::get('clinical', [ReportController::class, 'clinical'])->name('clinical');
+        Route::get('financial', [ReportController::class, 'financial'])->name('financial');
+        Route::get('inventory', [ReportController::class, 'inventory'])->name('inventory');
     });
 
     Route::middleware('module:recalls')->group(function () {

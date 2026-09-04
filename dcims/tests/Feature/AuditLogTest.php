@@ -91,4 +91,52 @@ class AuditLogTest extends TestCase
         $response->assertOk();
         $response->assertViewHas('logs', fn ($logs) => $logs->every(fn ($log) => $log->entity_type === 'invoices'));
     }
+
+    public function test_audit_log_index_can_be_filtered_by_actor(): void
+    {
+        $actorA = User::factory()->create();
+        $actorB = User::factory()->create();
+
+        AuditLog::factory()->create(['actor_id' => $actorA->id]);
+        AuditLog::factory()->create(['actor_id' => $actorB->id]);
+
+        $response = $this->actingAs(User::factory()->create())
+            ->get(route('audit-logs.index', ['actor_id' => $actorA->id]));
+
+        $response->assertOk();
+        $logs = $response->viewData('logs');
+        $this->assertCount(1, $logs);
+        $this->assertSame($actorA->id, $logs->first()->actor_id);
+    }
+
+    public function test_audit_log_index_can_be_filtered_by_record(): void
+    {
+        AuditLog::factory()->create(['entity_type' => 'patients', 'entity_id' => 101]);
+        AuditLog::factory()->create(['entity_type' => 'patients', 'entity_id' => 102]);
+
+        $response = $this->actingAs(User::factory()->create())
+            ->get(route('audit-logs.index', ['entity_type' => 'patients', 'entity_id' => 101]));
+
+        $response->assertOk();
+        $logs = $response->viewData('logs');
+        $this->assertCount(1, $logs);
+        $this->assertSame(101, $logs->first()->entity_id);
+    }
+
+    public function test_guest_cannot_export_the_audit_log(): void
+    {
+        $this->get(route('audit-logs.export'))->assertRedirect(route('login'));
+    }
+
+    public function test_staff_can_export_the_audit_log_as_csv(): void
+    {
+        AuditLog::factory()->create(['entity_type' => 'patients', 'action' => 'create']);
+
+        $response = $this->actingAs(User::factory()->create())->get(route('audit-logs.export'));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $this->assertStringContainsString('When,Actor,Action,Entity', $response->getContent());
+        $this->assertStringContainsString('patients', $response->getContent());
+    }
 }
